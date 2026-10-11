@@ -261,7 +261,7 @@ node EmeraldVideoPlayer3D < Node3D do
         if tex = @texture
           # Fast-path zero-copy blit from LibVLC pixel buffer into Godot Image
           img.update_buffer(w.to_i32, h.to_i32, Godot::Image::Format::FormatRgba8, pixels, false)
-          tex.update(img) rescue nil
+          tex.update(img)
         end
       end
     end
