@@ -8,8 +8,8 @@
 .crystal/
 .shards/
 .godot/
-docs/
-dist/
-staging/
+/docs/
+/dist/
+/staging/
 addons/*/bin/
 
