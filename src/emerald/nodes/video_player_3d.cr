@@ -241,7 +241,7 @@ node EmeraldVideoPlayer3D < Node3D do
 
   private def update_video_texture(fb : Emerald::VLC::VideoFrameBuffer) : Void
     fb.pull_frame do |pixels, w, h|
-      next if w == 0 || h == 0
+      next if w == 0 || h == 0 || pixels.size < (w.to_i64 * h.to_i64 * 4_i64)
 
       # Recreate Godot Image & Texture if resolution changes
       if @texture.nil? || @image.nil? || @current_width != w || @current_height != h
@@ -251,8 +251,7 @@ node EmeraldVideoPlayer3D < Node3D do
         img = Godot::Image.create_from_buffer(w.to_i32, h.to_i32, Godot::Image::Format::FormatRgba8, pixels, false)
         @image = img
 
-        tex = Godot.create(Godot::ImageTexture)
-        tex.set_image(img)
+        tex = Godot::ImageTexture.create_from_image(img)
         @texture = tex
 
         # Update Sprite3D if present
@@ -262,7 +261,7 @@ node EmeraldVideoPlayer3D < Node3D do
         if tex = @texture
           # Fast-path zero-copy blit from LibVLC pixel buffer into Godot Image
           img.update_buffer(w.to_i32, h.to_i32, Godot::Image::Format::FormatRgba8, pixels, false)
-          tex.update(img)
+          tex.update(img) rescue nil
         end
       end
     end

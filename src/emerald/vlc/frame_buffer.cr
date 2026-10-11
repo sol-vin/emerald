@@ -1,37 +1,55 @@
 module Emerald
   module VLC
     # Thread-safe double-buffered video frame surface for LibVLC memory decoding.
+    # Uses native LibC allocation and OS Thread::Mutex to guarantee zero Boehm GC interference
+    # when accessed from LibVLC's background native worker threads.
     class VideoFrameBuffer
-      getter width : UInt32
-      getter height : UInt32
-      getter pitch : UInt32
+      getter width : UInt32 = 0_u32
+      getter height : UInt32 = 0_u32
+      getter pitch : UInt32 = 0_u32
       getter? has_new_frame : Bool = false
 
       def has_new_frame : Bool
         @has_new_frame
       end
 
-      @mutex : ::Mutex
-      @buffer_a : Slice(UInt8)
-      @buffer_b : Slice(UInt8)
-      @write_buffer : Slice(UInt8)
-      @read_buffer : Slice(UInt8)
+      @mutex : ::Thread::Mutex
+      @raw_a : Pointer(UInt8) = Pointer(UInt8).null
+      @raw_b : Pointer(UInt8) = Pointer(UInt8).null
+      @write_ptr : Pointer(UInt8) = Pointer(UInt8).null
+      @read_ptr : Pointer(UInt8) = Pointer(UInt8).null
+      @size : Int32 = 0
 
       def initialize(@width : UInt32 = 0_u32, @height : UInt32 = 0_u32)
+        @mutex = ::Thread::Mutex.new
         @pitch = @width * 4_u32
-        @mutex = ::Mutex.new
+        alloc_buffers((@pitch * @height).to_i32)
+      end
 
-        size = (@pitch * @height).to_i32
-        if size > 0
-          @buffer_a = Slice(UInt8).new(size, 0_u8)
-          @buffer_b = Slice(UInt8).new(size, 0_u8)
-        else
-          @buffer_a = Slice(UInt8).empty
-          @buffer_b = Slice(UInt8).empty
+      private def alloc_buffers(sz : Int32) : Nil
+        if !@raw_a.null?
+          LibC.free(@raw_a.as(Void*))
+          @raw_a = Pointer(UInt8).null
+        end
+        if !@raw_b.null?
+          LibC.free(@raw_b.as(Void*))
+          @raw_b = Pointer(UInt8).null
         end
 
-        @write_buffer = @buffer_a
-        @read_buffer = @buffer_b
+        @size = sz
+        if sz > 0
+          @raw_a = LibC.malloc(sz.to_u64).as(UInt8*)
+          @raw_b = LibC.malloc(sz.to_u64).as(UInt8*)
+          if !@raw_a.null?
+            @raw_a.clear(sz)
+          end
+          if !@raw_b.null?
+            @raw_b.clear(sz)
+          end
+        end
+
+        @write_ptr = @raw_a
+        @read_ptr = @raw_b
       end
 
       # Resizes buffers when video resolution changes
@@ -40,41 +58,38 @@ module Emerald
           @width = new_width
           @height = new_height
           @pitch = new_width * 4_u32
-          size = (@pitch * new_height).to_i32
-
-          @buffer_a = Slice(UInt8).new(size, 0_u8)
-          @buffer_b = Slice(UInt8).new(size, 0_u8)
-          @write_buffer = @buffer_a
-          @read_buffer = @buffer_b
+          alloc_buffers((@pitch * new_height).to_i32)
           @has_new_frame = false
         end
       end
 
       # Returns the memory pointer where LibVLC decodes the upcoming frame
       def lock_write_buffer : Pointer(UInt8)
-        @write_buffer.to_unsafe
+        @write_ptr
       end
 
       # Commits the decoded frame and swaps write and read buffers
       def unlock_and_swap : Nil
         @mutex.synchronize do
-          # Swap buffers
-          tmp = @read_buffer
-          @read_buffer = @write_buffer
-          @write_buffer = tmp
+          tmp = @read_ptr
+          @read_ptr = @write_ptr
+          @write_ptr = tmp
           @has_new_frame = true
         end
       end
 
       # Pulls the latest decoded frame for uploading to Godot's ImageTexture.
-      # Returns nil if no new frame has arrived since last pull.
+      # Must be called from Godot's main thread during _process.
       def pull_frame(&block : Slice(UInt8), UInt32, UInt32 -> Nil) : Bool
         return false unless @has_new_frame
+        return false if @read_ptr.null? || @size <= 0
 
         @mutex.synchronize do
           return false unless @has_new_frame
+          return false if @read_ptr.null? || @size <= 0
           @has_new_frame = false
-          block.call(@read_buffer, @width, @height)
+          slice = Slice.new(@read_ptr, @size)
+          block.call(slice, @width, @height)
           true
         end
       end
@@ -82,11 +97,13 @@ module Emerald
       # Copies read buffer bytes into an existing destination slice
       def copy_read_buffer_to(dest : Slice(UInt8)) : Bool
         return false unless @has_new_frame
+        return false if @read_ptr.null? || @size <= 0
 
         @mutex.synchronize do
           return false unless @has_new_frame
-          len = Math.min(@read_buffer.size, dest.size)
-          dest[0, len].copy_from(@read_buffer[0, len])
+          return false if @read_ptr.null? || @size <= 0
+          len = Math.min(@size, dest.size)
+          dest[0, len].copy_from(Slice.new(@read_ptr, len))
           @has_new_frame = false
           true
         end
@@ -94,7 +111,18 @@ module Emerald
 
       # Total size of a single frame buffer in bytes
       def byte_size : Int32
-        (@pitch * @height).to_i32
+        @size
+      end
+
+      def finalize
+        if !@raw_a.null?
+          LibC.free(@raw_a.as(Void*))
+          @raw_a = Pointer(UInt8).null
+        end
+        if !@raw_b.null?
+          LibC.free(@raw_b.as(Void*))
+          @raw_b = Pointer(UInt8).null
+        end
       end
     end
   end

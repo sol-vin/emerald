@@ -86,7 +86,7 @@ node ResourceFormatLoaderEmerald < ResourceFormatLoader do
     def self._godot_has_virtual_method(method_name : String) : Bool
       norm = method_name.starts_with?('_') ? method_name : "_#{method_name}"
       case norm
-      when "_get_recognized_extensions", "_recognize_path", "_handles_type", "_get_resource_type", "_get_resource_uid", "_load"
+      when "_get_recognized_extensions", "_recognize_path", "_handles_type", "_get_resource_type", "_get_resource_script_class", "_get_resource_uid", "_exists", "_load"
         true
       else
         false
@@ -99,7 +99,7 @@ node ResourceFormatLoaderEmerald < ResourceFormatLoader do
       when "_get_recognized_extensions"
         Bridge.ret_packed_string_array(ret, EXTENSIONS)
       when "_recognize_path"
-        path = Bridge.arg_to_string(args[0])
+        path = (args && args[0]) ? Bridge.arg_to_string(args[0]) : ""
         tname = ""
         if args && args[1]
           tname = Bridge.arg_to_string_name(args[1]) rescue ""
@@ -109,19 +109,25 @@ node ResourceFormatLoaderEmerald < ResourceFormatLoader do
         ext = path.downcase.split('.').last? || ""
         ret.as(UInt8*).value = (type_ok && EXTENSIONS.includes?(ext)) ? 1_u8 : 0_u8
       when "_handles_type"
-        typename = Bridge.arg_to_string_name(args[0]) rescue ""
-        typename = Bridge.arg_to_string(args[0]) rescue "" if typename.empty?
+        typename = (args && args[0]) ? (Bridge.arg_to_string_name(args[0]) rescue "") : ""
+        typename = Bridge.arg_to_string(args[0]) rescue "" if typename.empty? && args && args[0]
         handles = (typename == "Resource" || typename == "EmeraldMediaResource" || typename == "VideoStream" || typename.empty?)
         ret.as(UInt8*).value = handles ? 1_u8 : 0_u8
       when "_get_resource_type"
-        path = Bridge.arg_to_string(args[0])
+        path = (args && args[0]) ? Bridge.arg_to_string(args[0]) : ""
         ext = path.downcase.split('.').last? || ""
         Bridge.ret_string(ret, EXTENSIONS.includes?(ext) ? "EmeraldMediaResource" : "")
+      when "_get_resource_script_class"
+        Bridge.ret_string(ret, "")
       when "_get_resource_uid"
         ret.as(Int64*).value = -1_i64
+      when "_exists"
+        path = (args && args[0]) ? Bridge.arg_to_string(args[0]) : ""
+        resolved = Emerald.resolve_source_path(path)
+        ret.as(UInt8*).value = File.file?(resolved) ? 1_u8 : 0_u8
       when "_load"
-        path = Bridge.arg_to_string(args[0])
-        orig_path = Bridge.arg_to_string(args[1])
+        path = (args && args[0]) ? Bridge.arg_to_string(args[0]) : ""
+        orig_path = (args && args[1]) ? Bridge.arg_to_string(args[1]) : ""
         target_path = orig_path.empty? ? path : orig_path
 
         res = Godot.create(EmeraldMediaResource)

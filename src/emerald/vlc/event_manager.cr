@@ -1,29 +1,34 @@
 module Emerald
   module VLC
     # Thread-safe event queue bridging LibVLC background threads to Godot's main thread.
+    # Uses a fixed ring-buffer and OS Thread::Mutex to guarantee zero Boehm GC allocations
+    # or fiber context switches when handling LibVLC C callback notifications.
     class EventManager
-      # Internal queued event payload
+      # Internal queued event payload (pure POD value type)
       struct QueuedEvent
         getter type : LibVLC::EventType
         getter time_ms : Int64
         getter position : Float32
-        getter error_message : String?
 
         def initialize(
-          @type : LibVLC::EventType,
+          @type : LibVLC::EventType = LibVLC::EventType::MediaPlayerNothingSpecial,
           @time_ms : Int64 = 0_i64,
-          @position : Float32 = 0.0_f32,
-          @error_message : String? = nil
+          @position : Float32 = 0.0_f32
         )
         end
       end
 
+      QUEUE_CAPACITY = 64
+
       getter handle : LibVLC::EventManager
-      @queue : Array(QueuedEvent)
-      @mutex : ::Mutex
+      @queue : StaticArray(QueuedEvent, 64)
+      @head : Int32 = 0
+      @tail : Int32 = 0
+      @count : Int32 = 0
+      @mutex : ::Thread::Mutex
       @c_callback : LibVLC::EventCallback
 
-      # Crystal callbacks registered by player or node
+      # Main-thread Crystal callbacks registered by player or node
       property on_playing : (-> Nil)?
       property on_paused : (-> Nil)?
       property on_stopped : (-> Nil)?
@@ -34,10 +39,10 @@ module Emerald
       property on_error : (String -> Nil)?
 
       def initialize(@handle : LibVLC::EventManager)
-        @queue = Array(QueuedEvent).new
-        @mutex = ::Mutex.new
+        @queue = StaticArray(QueuedEvent, 64).new(QueuedEvent.new)
+        @mutex = ::Thread::Mutex.new
 
-        # Native C callback trampoline
+        # Native C callback trampoline - executes on LibVLC worker threads
         @c_callback = ->(event_ptr : LibVLC::Event*, user_data : Void*) {
           manager = Box(EventManager).unbox(user_data)
           manager.handle_native_event(event_ptr.value)
@@ -46,38 +51,50 @@ module Emerald
         attach_all
       end
 
-      # Called by LibVLC on a background worker thread
+      # Called by LibVLC on a background worker thread.
+      # Must perform ZERO allocations and only lock the OS Thread::Mutex.
       def handle_native_event(event : LibVLC::Event) : Nil
-        queued = QueuedEvent.new(type: event.type)
-
+        ev_type = event.type
         @mutex.synchronize do
-          @queue << queued
+          if @count < QUEUE_CAPACITY
+            @queue[@tail] = QueuedEvent.new(type: ev_type)
+            @tail = (@tail + 1) % QUEUE_CAPACITY
+            @count += 1
+          end
         end
       end
 
       # Manually queues an error from Crystal wrapper
       def queue_error(message : String) : Nil
         @mutex.synchronize do
-          @queue << QueuedEvent.new(
-            type: LibVLC::EventType::MediaPlayerEncounteredError,
-            error_message: message
-          )
+          if @count < QUEUE_CAPACITY
+            @queue[@tail] = QueuedEvent.new(type: LibVLC::EventType::MediaPlayerEncounteredError)
+            @tail = (@tail + 1) % QUEUE_CAPACITY
+            @count += 1
+          end
         end
       end
 
       # Dispatches all pending events to registered callbacks.
       # Must be called regularly on the main thread (e.g. from Godot _process).
       def poll_events : Nil
-        events_to_process = Array(QueuedEvent).new
+        # Drain events from ring buffer into temporary local array on the main thread
+        events = StaticArray(QueuedEvent, 64).new(QueuedEvent.new)
+        n_events = 0
 
         @mutex.synchronize do
-          unless @queue.empty?
-            events_to_process.concat(@queue)
-            @queue.clear
+          while @count > 0 && n_events < QUEUE_CAPACITY
+            events[n_events] = @queue[@head]
+            @head = (@head + 1) % QUEUE_CAPACITY
+            @count -= 1
+            n_events += 1
           end
         end
 
-        events_to_process.each do |ev|
+        # Dispatch on the main thread
+        i = 0
+        while i < n_events
+          ev = events[i]
           case ev.type
           when LibVLC::EventType::MediaPlayerPlaying
             @on_playing.try(&.call)
@@ -92,9 +109,9 @@ module Emerald
           when LibVLC::EventType::MediaPlayerPositionChanged
             @on_position_changed.try(&.call(ev.position))
           when LibVLC::EventType::MediaPlayerEncounteredError
-            err = ev.error_message || "LibVLC playback error encountered"
-            @on_error.try(&.call(err))
+            @on_error.try(&.call("LibVLC playback error encountered"))
           end
+          i += 1
         end
       end
 
