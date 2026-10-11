@@ -153,10 +153,18 @@ jobs:
       - name: Install Dependencies
         run: |
           brew install --cask vlc || true
+          if [ -d "/Applications/VLC.app/Contents/MacOS/lib" ]; then
+            sudo mkdir -p /usr/local/lib /opt/homebrew/lib
+            sudo ln -sf /Applications/VLC.app/Contents/MacOS/lib/libvlc*.dylib /opt/homebrew/lib/ 2>/dev/null || true
+            sudo ln -sf /Applications/VLC.app/Contents/MacOS/lib/libvlc*.dylib /usr/local/lib/ 2>/dev/null || true
+            echo "CRYSTAL_LIBRARY_PATH=/Applications/VLC.app/Contents/MacOS/lib" >> "$GITHUB_ENV"
+            echo "DYLD_FALLBACK_LIBRARY_PATH=/Applications/VLC.app/Contents/MacOS/lib" >> "$GITHUB_ENV"
+          fi
           shards install || true
       - name: Run Specifications
         run: |
-          crystal spec
+          crystal spec --link-flags "-L/Applications/VLC.app/Contents/MacOS/lib" || crystal spec
+
 
   fast-specs-windows:
     name: Fast Specs (Windows)
@@ -338,6 +346,16 @@ jobs:
         uses: crystal-lang/install-crystal@v1
         with:
           crystal: 1.21.0
+      - name: Install Dependencies
+        run: |
+          brew install --cask vlc || true
+          if [ -d "/Applications/VLC.app/Contents/MacOS/lib" ]; then
+            sudo mkdir -p /usr/local/lib /opt/homebrew/lib
+            sudo ln -sf /Applications/VLC.app/Contents/MacOS/lib/libvlc*.dylib /opt/homebrew/lib/ 2>/dev/null || true
+            sudo ln -sf /Applications/VLC.app/Contents/MacOS/lib/libvlc*.dylib /usr/local/lib/ 2>/dev/null || true
+            echo "CRYSTAL_LIBRARY_PATH=/Applications/VLC.app/Contents/MacOS/lib" >> "$GITHUB_ENV"
+            echo "DYLD_FALLBACK_LIBRARY_PATH=/Applications/VLC.app/Contents/MacOS/lib" >> "$GITHUB_ENV"
+          fi
       - name: Setup Godot Engine
         uses: appsinacup/action_setup_godot@main
         with:
@@ -378,7 +396,7 @@ jobs:
           if [ -z "$ADDON_NAME" ]; then ADDON_NAME="emerald"; fi
           make build RELEASE=1 || (
             mkdir -p "addons/${ADDON_NAME}/bin"
-            crystal build src/main.cr -o "addons/${ADDON_NAME}/bin/game.dylib" --link-flags "-dynamiclib" --release -Dlibgodot_addon
+            crystal build src/main.cr -o "addons/${ADDON_NAME}/bin/game.dylib" --link-flags "-dynamiclib -L/Applications/VLC.app/Contents/MacOS/lib" --release -Dlibgodot_addon
           )
           if [ -f "bin/crystal_bridge.dylib" ]; then
             cp -f "bin/crystal_bridge.dylib" "addons/${ADDON_NAME}/bin/crystal_bridge.dylib"
@@ -572,8 +590,15 @@ jobs:
       - name: Run Test Suites
         run: |
           brew install --cask vlc || true
+          if [ -d "/Applications/VLC.app/Contents/MacOS/lib" ]; then
+            sudo mkdir -p /usr/local/lib /opt/homebrew/lib
+            sudo ln -sf /Applications/VLC.app/Contents/MacOS/lib/libvlc*.dylib /opt/homebrew/lib/ 2>/dev/null || true
+            sudo ln -sf /Applications/VLC.app/Contents/MacOS/lib/libvlc*.dylib /usr/local/lib/ 2>/dev/null || true
+            echo "CRYSTAL_LIBRARY_PATH=/Applications/VLC.app/Contents/MacOS/lib" >> "$GITHUB_ENV"
+            echo "DYLD_FALLBACK_LIBRARY_PATH=/Applications/VLC.app/Contents/MacOS/lib" >> "$GITHUB_ENV"
+          fi
           shards install || true
-          crystal spec
+          crystal spec --link-flags "-L/Applications/VLC.app/Contents/MacOS/lib" || crystal spec
 
   test-engine-windows:
     name: Test Engine & Editor (Windows)
@@ -594,6 +619,9 @@ jobs:
       - name: Run Test Suites
         shell: pwsh
         run: |
+          if (-not (Test-Path "C:\Program Files\VideoLAN\VLC\libvlc.dll")) {
+            choco install vlc -y --no-progress
+          }
           if (Test-Path "ext/libvlc") {
             $vlcLib = (Resolve-Path "ext/libvlc").Path
             $env:LIB = "$vlcLib;$($env:LIB)"
