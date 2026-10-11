@@ -159,9 +159,10 @@ jobs:
           if [ -n "$VLC_LIB" ]; then
             VLC_DIR=$(dirname "$VLC_LIB")
             echo "Found LibVLC at $VLC_LIB in $VLC_DIR"
-            sudo mkdir -p /usr/local/lib /opt/homebrew/lib
             sudo ln -sf "$VLC_LIB" /usr/local/lib/libvlc.dylib
+            sudo ln -sf "$VLC_LIB" /usr/local/lib/liblibvlc.dylib
             sudo ln -sf "$VLC_LIB" /opt/homebrew/lib/libvlc.dylib
+            sudo ln -sf "$VLC_LIB" /opt/homebrew/lib/liblibvlc.dylib
             CORE_LIB=$(find /Applications/VLC.app -name "libvlccore*.dylib" 2>/dev/null | head -n 1)
             if [ -n "$CORE_LIB" ]; then
               sudo ln -sf "$CORE_LIB" /usr/local/lib/libvlccore.dylib
@@ -169,6 +170,9 @@ jobs:
             fi
             if [ ! -f "$VLC_DIR/libvlc.dylib" ]; then
               sudo ln -sf "$VLC_LIB" "$VLC_DIR/libvlc.dylib" 2>/dev/null || true
+            fi
+            if [ ! -f "$VLC_DIR/liblibvlc.dylib" ]; then
+              sudo ln -sf "$VLC_LIB" "$VLC_DIR/liblibvlc.dylib" 2>/dev/null || true
             fi
             echo "CRYSTAL_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
             echo "DYLD_FALLBACK_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
@@ -365,9 +369,10 @@ jobs:
           VLC_LIB=$(find /Applications/VLC.app -name "libvlc*.dylib" 2>/dev/null | head -n 1)
           if [ -n "$VLC_LIB" ]; then
             VLC_DIR=$(dirname "$VLC_LIB")
-            sudo mkdir -p /usr/local/lib /opt/homebrew/lib
             sudo ln -sf "$VLC_LIB" /usr/local/lib/libvlc.dylib
+            sudo ln -sf "$VLC_LIB" /usr/local/lib/liblibvlc.dylib
             sudo ln -sf "$VLC_LIB" /opt/homebrew/lib/libvlc.dylib
+            sudo ln -sf "$VLC_LIB" /opt/homebrew/lib/liblibvlc.dylib
             CORE_LIB=$(find /Applications/VLC.app -name "libvlccore*.dylib" 2>/dev/null | head -n 1)
             if [ -n "$CORE_LIB" ]; then
               sudo ln -sf "$CORE_LIB" /usr/local/lib/libvlccore.dylib
@@ -375,6 +380,9 @@ jobs:
             fi
             if [ ! -f "$VLC_DIR/libvlc.dylib" ]; then
               sudo ln -sf "$VLC_LIB" "$VLC_DIR/libvlc.dylib" 2>/dev/null || true
+            fi
+            if [ ! -f "$VLC_DIR/liblibvlc.dylib" ]; then
+              sudo ln -sf "$VLC_LIB" "$VLC_DIR/liblibvlc.dylib" 2>/dev/null || true
             fi
             echo "CRYSTAL_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
             echo "DYLD_FALLBACK_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
@@ -616,9 +624,10 @@ jobs:
           VLC_LIB=$(find /Applications/VLC.app -name "libvlc*.dylib" 2>/dev/null | head -n 1)
           if [ -n "$VLC_LIB" ]; then
             VLC_DIR=$(dirname "$VLC_LIB")
-            sudo mkdir -p /usr/local/lib /opt/homebrew/lib
             sudo ln -sf "$VLC_LIB" /usr/local/lib/libvlc.dylib
+            sudo ln -sf "$VLC_LIB" /usr/local/lib/liblibvlc.dylib
             sudo ln -sf "$VLC_LIB" /opt/homebrew/lib/libvlc.dylib
+            sudo ln -sf "$VLC_LIB" /opt/homebrew/lib/liblibvlc.dylib
             CORE_LIB=$(find /Applications/VLC.app -name "libvlccore*.dylib" 2>/dev/null | head -n 1)
             if [ -n "$CORE_LIB" ]; then
               sudo ln -sf "$CORE_LIB" /usr/local/lib/libvlccore.dylib
@@ -626,6 +635,9 @@ jobs:
             fi
             if [ ! -f "$VLC_DIR/libvlc.dylib" ]; then
               sudo ln -sf "$VLC_LIB" "$VLC_DIR/libvlc.dylib" 2>/dev/null || true
+            fi
+            if [ ! -f "$VLC_DIR/liblibvlc.dylib" ]; then
+              sudo ln -sf "$VLC_LIB" "$VLC_DIR/liblibvlc.dylib" 2>/dev/null || true
             fi
             echo "CRYSTAL_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
             echo "DYLD_FALLBACK_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"

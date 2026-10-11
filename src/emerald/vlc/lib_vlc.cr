@@ -1,6 +1,10 @@
 module Emerald
   module VLC
-    @[Link("libvlc")]
+    {% if flag?(:windows) %}
+      @[Link("libvlc")]
+    {% else %}
+      @[Link("vlc")]
+    {% end %}
     lib LibVLC
       # Opaque pointer handles
       type Instance = Void*
