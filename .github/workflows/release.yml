@@ -1166,7 +1166,7 @@ jobs:
   deploy-docs:
     name: Deploy Docs to GitHub Pages
     needs: [init-release, finalize-release]
-    if: always() && !cancelled() && needs.finalize-release.result == 'success'
+    if: always() && !cancelled() && needs.finalize-release.result == 'success' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     runs-on: ubuntu-latest
     continue-on-error: true
     timeout-minutes: 15
