@@ -620,7 +620,7 @@ jobs:
         uses: crystal-lang/install-crystal@v1
         with:
           crystal: 1.21.0
-      - name: Run Test Suites
+      - name: Install Dependencies
         run: |
           brew install --cask vlc || true
           VLC_LIB=$(find /Applications/VLC.app -name "libvlc*.dylib" 2>/dev/null | head -n 1)
@@ -643,10 +643,14 @@ jobs:
               sudo ln -sf "$VLC_LIB" "$VLC_DIR/liblibvlc.dylib" 2>/dev/null || true
             fi
             echo "CRYSTAL_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
+            echo "DYLD_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
             echo "DYLD_FALLBACK_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
           fi
           shards install || true
-          crystal spec
+
+      - name: Run Test Suites
+        run: |
+          crystal spec --link-flags "-Wl,-rpath,/Applications/VLC.app/Contents/MacOS/lib -L/Applications/VLC.app/Contents/MacOS/lib" || crystal spec
 
   test-engine-windows:
     name: Test Engine & Editor (Windows)

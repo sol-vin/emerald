@@ -1,4 +1,17 @@
 # CARBON CHANGELOG
+## [0.1.8] - 2026-10-11
+### ✨ Features & Improvements
+- ✦ initial release of Emerald LibVLC bindings and media player nodes for Lapis ([`0d627b7`](https://github.com/sol-vin/emerald/commit/0d627b7))
+- ✦ **[CI]** add release CI workflow for Godot addon packaging ([`e5982b3`](https://github.com/sol-vin/emerald/commit/e5982b3))
+
+### 🐛 Bug Fixes
+- ✓ **[DOCS]** track compiled src/docs by scoping root /docs in gitignore ([`4d1a1ed`](https://github.com/sol-vin/emerald/commit/4d1a1ed))
+- ✓ **[CI]** configure libvlc paths for macOS and ensure VLC on Windows test runner ([`e449653`](https://github.com/sol-vin/emerald/commit/e449653))
+- ✓ **[CI]** robustly locate and symlink LibVLC dylibs on macOS runners ([`98e5826`](https://github.com/sol-vin/emerald/commit/98e5826))
+- ✓ **[VLC]** link against vlc on Unix and libvlc on Windows with dual symlink fallback ([`5b8fa27`](https://github.com/sol-vin/emerald/commit/5b8fa27))
+- ✓ **[CI]** ensure /usr/local/lib and /opt/homebrew/lib exist on macOS runners ([`f071609`](https://github.com/sol-vin/emerald/commit/f071609))
+
+---
 ## [0.1.7] - 2026-10-11
 ### ✨ Features & Improvements
 - ✦ initial release of Emerald LibVLC bindings and media player nodes for Lapis ([`0d627b7`](https://github.com/sol-vin/emerald/commit/0d627b7))
