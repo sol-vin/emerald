@@ -1,0 +1,46 @@
+id: "SubtitlesAndSPU"
+title: "Subtitles & Closed Captions (SPU)"
+summary: "Selecting embedded subtitle tracks, adding external SRT/VTT files, and adjusting timing delays."
+track: "premium_features"
+
+sections:
+  - id: "overview"
+    title: "Overview"
+    summary: "LibVLC sub-picture (SPU) rendering architecture."
+    content: |
+      Emerald provides full access to LibVLC's sub-picture (SPU) engine. Subtitles are rendered directly over the video frames by LibVLC, ensuring crisp font rendering, styling, and positioning.
+
+  - id: "listing_tracks"
+    title: "Listing & Selecting Subtitle Tracks"
+    summary: "Enumerating embedded subtitles and setting active track."
+    content: |
+      ```crystal
+      # Inspect available subtitle streams
+      player.subtitle_tracks.each do |sub|
+        Godot.print("Subtitle [#{sub.id}]: #{sub.name} (Lang: #{sub.language})")
+      end
+
+      # Select specific language track
+      player.select_subtitle_track(1)
+
+      # Disable subtitles (-1)
+      player.select_subtitle_track(-1)
+      ```
+
+  - id: "external_subtitles"
+    title: "Loading External Subtitles (.srt, .vtt, .ass)"
+    summary: "Attaching external subtitle files at runtime."
+    content: |
+      ```crystal
+      # Dynamically attach an external subtitle file
+      player.load_subtitles("res://subtitles/english_subs.srt")
+      ```
+
+  - id: "timing_synchronization"
+    title: "Timing Synchronization"
+    summary: "Correcting out-of-sync subtitles with millisecond delay offsets."
+    content: |
+      ```crystal
+      # If subtitles appear 500ms too early, delay them by 500ms
+      player.set_subtitle_delay(500_i64)
+      ```

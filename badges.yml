@@ -1,0 +1,21 @@
+settings:
+  target_file: "README.md"
+  tag: "carbon:badges"
+  style: "flat"
+  layout: "inline"
+
+badges:
+  - type: "crystal"
+  - type: "license"
+  - type: "custom"
+    label: "Godot"
+    message: "4.8+"
+    color: "478CBF"
+    logo: "godotengine"
+    url: "https://godotengine.org"
+  - type: "custom"
+    label: "LibVLC"
+    message: "3.x"
+    color: "FF8800"
+    logo: "vlcmediaplayer"
+    url: "https://www.videolan.org"

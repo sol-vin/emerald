@@ -1,0 +1,32 @@
+name: emerald
+version: 0.1.1
+
+authors:
+  - Ian Rash <redcodefinal@gmail.com>
+
+description: VLC bindings and premium video/audio player nodes for Lapis (Godot 4 in Crystal).
+license: MIT
+
+crystal: ">= 1.10.0"
+
+dependencies:
+  lapis:
+    github: sol-vin/lapis
+    branch: master
+
+development_dependencies:
+  carbon:
+    github: sol-vin/carbon
+    branch: main
+  jasper:
+    github: sol-vin/jasper
+    branch: main
+
+targets:
+  carbon:
+    main: lib/carbon/src/carbon/cli.cr
+  jasper:
+    main: lib/jasper/src/jasper_cli.cr
+  emerald-inspect:
+    main: examples/01_cli_metadata_inspector.cr
+

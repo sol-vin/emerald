@@ -1,0 +1,40 @@
+title: "Emerald Documentation"
+namespace: "Emerald::Docs"
+source_dir: "docs_src"
+output_file: "src/docs/generated_docs.cr"
+
+tracks:
+  - id: "getting_started"
+    title: "Getting Started"
+    description: "Installation, environment setup, and introductory walkthroughs."
+    dir: "01_getting_started"
+    order:
+      - "Introduction"
+      - "Installation"
+
+  - id: "nodes"
+    title: "Godot Nodes"
+    description: "In-depth guide to Emerald's Godot 2D, 3D, and audio player nodes."
+    dir: "02_nodes"
+    order:
+      - "VideoPlayer"
+      - "AudioPlayer"
+      - "VideoPlayer3D"
+
+  - id: "premium_features"
+    title: "Premium Features"
+    description: "Subtitles, metadata inspection, multi-track streams, and graphic equalizer."
+    dir: "03_premium_features"
+    order:
+      - "SubtitlesAndSPU"
+      - "MetadataInspection"
+      - "MultiTrackMedia"
+      - "AudioEqualizer"
+
+  - id: "architecture"
+    title: "Architecture & Internals"
+    description: "LibVLC C-FFI, double-buffering, memory synchronization, and thread safety."
+    dir: "04_architecture"
+    order:
+      - "FfiBindings"
+      - "ZeroCopyRendering"

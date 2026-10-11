@@ -1,0 +1,40 @@
+id: "AudioPlayer"
+title: "EmeraldAudioPlayer (Audio Node)"
+summary: "Lightweight Godot Node for music, dialogue, sound effects, and online radio streams."
+track: "nodes"
+
+sections:
+  - id: "overview"
+    title: "Overview"
+    summary: "Introduction to EmeraldAudioPlayer node."
+    content: |
+      `EmeraldAudioPlayer` is a non-visual Godot `Node` optimized exclusively for audio playback. Because it bypasses video buffer allocation and rendering, it provides minimal memory footprint and zero CPU overhead.
+
+  - id: "inspector_properties"
+    title: "Inspector Properties"
+    summary: "Exposed properties visible in Godot editor inspector."
+    content: |
+      - `source` (String): Audio file path or stream URL (e.g. Shoutcast/Icecast URL).
+      - `autoplay` (Bool): Starts audio playback immediately when added to tree.
+      - `loop` (Bool): Loops audio playback continuously.
+      - `volume` (Int32): Audio volume from 0 to 100.
+      - `playback_rate` (Float64): Playback speed multiplier (0.25x to 4.0x).
+      - `equalizer_preset` (String): Built-in 10-band equalizer preset (e.g. 'Rock', 'Pop', 'Vocal').
+
+  - id: "streaming_example"
+    title: "Internet Radio Streaming Example"
+    summary: "Streaming online radio with dynamic metadata inspection."
+    content: |
+      ```crystal
+      player = EmeraldAudioPlayer.new
+      player.source = "https://stream.radioparadise.com/flac"
+      player.volume = 90
+      player.equalizer_preset = "Rock"
+      player.play
+
+      player.metadata_loaded.connect do
+        if meta = player.get_metadata
+          Godot.print("Now Playing: #{meta.title} by #{meta.artist}")
+        end
+      end
+      ```

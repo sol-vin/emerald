@@ -1,0 +1,81 @@
+[gd_scene format=3 uid="uid://b82c3k1xmq8vd"]
+
+[node name="Main" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Background" type="ColorRect" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.08, 0.08, 0.1, 1)
+
+[node name="EmeraldVideoPlayer" type="EmeraldVideoPlayer" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 0.88
+grow_horizontal = 2
+grow_vertical = 2
+source = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"
+autoplay = true
+volume = 80
+aspect_mode = "Fit"
+
+[node name="ControlsPanel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = -1
+anchor_top = 0.88
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="ControlsBox" type="HBoxContainer" parent="ControlsPanel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 20.0
+offset_top = 15.0
+offset_right = -20.0
+offset_bottom = -15.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+
+[node name="PlayPauseButton" type="Button" parent="ControlsPanel/ControlsBox"]
+layout_mode = 2
+text = "⏸ Pause"
+
+[node name="StopButton" type="Button" parent="ControlsPanel/ControlsBox"]
+layout_mode = 2
+text = "⏹ Stop"
+
+[node name="ProgressBar" type="HSlider" parent="ControlsPanel/ControlsBox"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+max_value = 1.0
+step = 0.001
+
+[node name="TimeLabel" type="Label" parent="ControlsPanel/ControlsBox"]
+layout_mode = 2
+text = "00:00 / --:--"
+
+[node name="VolumeLabel" type="Label" parent="ControlsPanel/ControlsBox"]
+layout_mode = 2
+text = "Vol:"
+
+[node name="VolumeSlider" type="HSlider" parent="ControlsPanel/ControlsBox"]
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+size_flags_vertical = 4
+value = 80.0

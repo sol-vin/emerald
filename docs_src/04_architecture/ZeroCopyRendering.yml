@@ -1,0 +1,25 @@
+id: "ZeroCopyRendering"
+title: "Zero-Tear Double-Buffered Memory Pipeline"
+summary: "Decoupling asynchronous VLC decoder threads from Godot's main graphics loop."
+track: "architecture"
+
+sections:
+  - id: "concurrency_challenge"
+    title: "The Concurrency Challenge"
+    summary: "Managing thread boundaries between video decoder and game engine."
+    content: |
+      Video decoding is fundamentally asynchronous and multi-threaded. LibVLC decodes frames on its own worker threads at arbitrary timestamps (e.g. 23.976 fps, 29.97 fps, 60 fps). Conversely, Godot renders on the main thread at the display refresh rate (e.g. 60 Hz, 144 Hz).
+
+      Writing directly to Godot's textures from VLC threads causes race conditions, crashes, and visual screen tearing.
+
+  - id: "double_buffer_solution"
+    title: "Double-Buffer Architecture"
+    summary: "How VideoFrameBuffer achieves tearing-free rendering."
+    content: |
+      Emerald solves this with `Emerald::VLC::VideoFrameBuffer`:
+
+      1. **Buffer A (Write)**: LibVLC's `lock` callback returns the memory pointer of the back-buffer.
+      2. **Atomic Swap**: Upon frame completion (`unlock`), the write and read pointers are atomically swapped under a lightweight Mutex.
+      3. **Main Thread Presentation**: During Godot's `_process(delta)`, if a new frame is ready, the main thread reads the front-buffer and uploads it to Godot's `ImageTexture`.
+
+      This guarantees 100% thread safety, zero screen tearing, and smooth rendering across all frame rates.

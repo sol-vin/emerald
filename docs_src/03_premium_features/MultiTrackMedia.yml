@@ -1,0 +1,37 @@
+id: "MultiTrackMedia"
+title: "Multi-Track Audio & Video Streams"
+summary: "Selecting alternate language audio tracks, commentary, and multi-angle video streams."
+track: "premium_features"
+
+sections:
+  - id: "overview"
+    title: "Overview"
+    summary: "Managing multi-track audio and video streams."
+    content: |
+      Professional media containers like MKV and MP4 often contain multiple audio language dubs (e.g. English, French, Japanese, Director's Commentary) and alternate video angles. Emerald allows selecting tracks on the fly without stopping or reloading the media.
+
+  - id: "audio_track_switching"
+    title: "Audio Track Switching & Lip-Sync"
+    summary: "Selecting dub tracks and adjusting audio delay."
+    content: |
+      ```crystal
+      # List all available audio streams
+      player.audio_tracks.each do |track|
+        Godot.print("Audio [#{track.id}]: #{track.name} (#{track.channel_layout})")
+      end
+
+      # Switch to Japanese audio track
+      player.select_audio_track(2)
+
+      # Fine-tune lip-sync offset (-100ms or +100ms)
+      player.set_audio_delay(-100_i64)
+      ```
+
+  - id: "video_angle_switching"
+    title: "Video Angle Switching"
+    summary: "Switching between video streams or camera perspectives."
+    content: |
+      ```crystal
+      # Switch to alternate camera angle
+      player.select_video_track(1)
+      ```

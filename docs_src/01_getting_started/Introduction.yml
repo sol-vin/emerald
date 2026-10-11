@@ -1,0 +1,27 @@
+id: "Introduction"
+title: "Introduction to Emerald"
+summary: "High-performance LibVLC integration and media player nodes for Lapis (Godot 4 in Crystal)."
+track: "getting_started"
+
+sections:
+  - id: "what_is_emerald"
+    title: "What is Emerald?"
+    summary: "Overview of Emerald and multimedia format support."
+    content: |
+      **Emerald** (`sol-vin/emerald`) bridges the industry-standard **LibVLC** multimedia framework into **Lapis** (Godot Engine 4.8+ Crystal GDExtension bindings).
+
+      While standard Godot includes a basic `VideoStreamPlayer` with limited format support (primarily Theora OGV), Emerald unlocks playback for **any modern audio and video container/codec**:
+      - **Video**: MP4, MKV, WebM, AVI, MOV, FLV, MPEG-TS, H.264, HEVC/H.265, VP9, AV1.
+      - **Audio**: MP3, FLAC, OGG Vorbis, Opus, AAC, WAV, ALAC, WMA.
+      - **Streaming**: HLS (`.m3u8`), RTSP, RTMP, HTTP/HTTPS live streams, internet radio.
+
+  - id: "key_features"
+    title: "Key Features"
+    summary: "Highlighting key capabilities of the library."
+    content: |
+      - **High-Performance Memory Rendering**: Decodes video frames directly into double-buffered RGBA memory and transfers them into Godot's `ImageTexture` without screen tearing or frame drops.
+      - **Dedicated Godot Nodes**: Ready-to-use `EmeraldVideoPlayer` (Control UI), `EmeraldAudioPlayer` (audio engine), and `EmeraldVideoPlayer3D` (in-world screens and materials).
+      - **Subtitles & Closed Captions**: Full support for embedded subtitle tracks, external subtitle files (`.srt`, `.vtt`, `.sub`), and real-time subtitle sync delays.
+      - **Multi-Track Audio & Video**: Switch between multi-language dubs, commentary tracks, and camera angles on the fly.
+      - **10-Band Graphic Equalizer**: 18 standard presets (`Rock`, `Pop`, `Jazz`, `Classical`, `FullBass`, `Techno`, etc.) plus manual preamp and per-band decibel tuning.
+      - **Metadata Inspection**: Rich tag extraction for Title, Artist, Album, Genre, Track Number, Year, Cover Art URL, Codec info, and duration.

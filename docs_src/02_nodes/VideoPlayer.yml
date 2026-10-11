@@ -1,0 +1,48 @@
+id: "VideoPlayer"
+title: "EmeraldVideoPlayer (Control UI Node)"
+summary: "High-level Godot Control node for video cutscenes, in-game UI players, and streaming video."
+track: "nodes"
+
+sections:
+  - id: "overview"
+    title: "Overview"
+    summary: "Introduction to EmeraldVideoPlayer control node."
+    content: |
+      `EmeraldVideoPlayer` is a Godot `Control` node that renders decoded video directly to an internal `TextureRect` with aspect ratio management and full playback controls.
+
+  - id: "inspector_properties"
+    title: "Inspector Properties"
+    summary: "Exposed properties visible in Godot editor inspector."
+    content: |
+      - `source` (String): File path (`res://` or absolute) or stream URL (`https://`, `rtsp://`).
+      - `autoplay` (Bool): If true, starts playback immediately upon entering the scene tree.
+      - `loop` (Bool): If true, restarts playback automatically when the end is reached.
+      - `volume` (Int32): Audio volume from 0 to 100.
+      - `playback_rate` (Float64): Playback speed multiplier (0.25x to 4.0x).
+      - `aspect_mode` (String): Aspect ratio mode: "Fit", "Fill", "Stretch", or "Center".
+
+  - id: "usage_example"
+    title: "Usage Example in Crystal"
+    summary: "Instantiating and controlling EmeraldVideoPlayer programmatically."
+    content: |
+      ```crystal
+      require "lapis"
+      require "emerald"
+
+      node CutsceneScene < Node2D do
+        def _ready : Void
+          player = EmeraldVideoPlayer.new
+          player.source = "res://videos/intro_cutscene.mp4"
+          player.volume = 100
+          player.loop = false
+          player.autoplay = true
+
+          # Connect to completion signal
+          player.playback_finished.connect do
+            Godot.print("Cutscene finished, loading main menu...")
+          end
+
+          add_child(player)
+        end
+      end
+      ```

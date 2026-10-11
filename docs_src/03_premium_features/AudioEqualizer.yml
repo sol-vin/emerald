@@ -1,0 +1,40 @@
+id: "AudioEqualizer"
+title: "10-Band Graphic Equalizer"
+summary: "Shaping audio frequencies with standard presets and manual decibel amplification."
+track: "premium_features"
+
+sections:
+  - id: "overview"
+    title: "Overview"
+    summary: "10-band audio graphic equalizer introduction."
+    content: |
+      Emerald incorporates LibVLC's 10-band audio graphic equalizer covering 60 Hz to 16 kHz. It comes pre-loaded with 18 standard industry presets and supports manual preamp and per-band tuning.
+
+  - id: "standard_presets"
+    title: "Standard Presets"
+    summary: "Applying pre-configured equalizer curves."
+    content: |
+      Available presets: `Flat`, `Classical`, `Club`, `Dance`, `FullBass`, `FullBassTreble`, `FullTreble`, `Headphones`, `LargeHall`, `Live`, `Party`, `Pop`, `Reggae`, `Rock`, `Ska`, `Soft`, `SoftRock`, `Techno`, `Vocal`.
+
+      ```crystal
+      # Apply preset on VideoPlayer or AudioPlayer
+      player.set_equalizer_preset("Rock")
+      ```
+
+  - id: "manual_equalizer_tuning"
+    title: "Manual Equalizer Tuning"
+    summary: "Configuring custom preamp and frequency band amplification."
+    content: |
+      ```crystal
+      eq = Emerald::VLC::Equalizer.new
+      eq.preamp = 3.0_f32 # Boost overall preamp by +3 dB
+
+      # Boost 60 Hz bass band by +6.0 dB
+      eq.set_amp(0_u32, 6.0_f32)
+
+      # Reduce 16 kHz treble by -2.0 dB
+      eq.set_amp(9_u32, -2.0_f32)
+
+      # Apply custom equalizer to player
+      vlc_player.equalizer = eq
+      ```

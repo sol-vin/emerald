@@ -1,0 +1,43 @@
+id: "MetadataInspection"
+title: "Metadata & Tag Inspection"
+summary: "Inspecting duration, ID3/Vorbis/MP4 tags, cover art, and stream characteristics."
+track: "premium_features"
+
+sections:
+  - id: "overview"
+    title: "Overview"
+    summary: "Extracting metadata tags from media containers."
+    content: |
+      Emerald inspects media files and network streams to extract tag information and timing properties.
+
+  - id: "inspecting_tags"
+    title: "Inspecting Media Tags"
+    summary: "Reading ID3/Vorbis tag fields from Media or Player."
+    content: |
+      ```crystal
+      media = Emerald::VLC::Media.new("assets/soundtrack.mp3")
+      meta = media.metadata
+
+      puts "Title:     #{meta.title}"
+      puts "Artist:    #{meta.artist}"
+      puts "Album:     #{meta.album}"
+      puts "Genre:     #{meta.genre}"
+      puts "Year:      #{meta.date}"
+      puts "Track:     #{meta.track_number}"
+      puts "Duration:  #{meta.formatted_duration} (#{meta.duration_ms} ms)"
+      puts "Cover Art: #{meta.artwork_url}"
+      ```
+
+  - id: "inspecting_streams"
+    title: "Inspecting Video & Audio Streams"
+    summary: "Enumerating stream resolutions, codecs, and channel layouts."
+    content: |
+      ```crystal
+      media.video_tracks.each do |vt|
+        puts "Video: #{vt.resolution} @ #{vt.frame_rate.round(2)} fps (Codec: #{vt.codec})"
+      end
+
+      media.audio_tracks.each do |at|
+        puts "Audio: #{at.channel_layout}, #{at.sample_rate} Hz (Codec: #{at.codec})"
+      end
+      ```

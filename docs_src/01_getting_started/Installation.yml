@@ -1,0 +1,47 @@
+id: "Installation"
+title: "Installation & Environment Setup"
+summary: "Adding Emerald to your shard.yml and configuring the LibVLC environment."
+track: "getting_started"
+
+sections:
+  - id: "adding_the_shard"
+    title: "Adding the Shard"
+    summary: "Configuring shard.yml with emerald and lapis."
+    content: |
+      Add `emerald` to your project's `shard.yml`:
+
+      ```yaml
+      dependencies:
+        lapis:
+          github: sol-vin/lapis
+          branch: master
+        emerald:
+          github: sol-vin/emerald
+          branch: main
+      ```
+
+      Run `shards install` to fetch the dependencies.
+
+  - id: "libvlc_prerequisites"
+    title: "LibVLC Prerequisites"
+    summary: "System requirements and VLC runtime binaries."
+    content: |
+      Emerald interfaces directly with the native LibVLC runtime library installed on your system.
+
+      - **Windows**: Install the standard 64-bit VLC Media Player from [videolan.org](https://www.videolan.org). Emerald automatically locates `C:\Program Files\VideoLAN\VLC`, sets `VLC_PLUGIN_PATH`, and configures DLL discovery via `SetDllDirectoryA`.
+      - **Linux (Ubuntu/Debian)**: `sudo apt install libvlc-dev vlc-plugin-base`
+      - **Arch Linux**: `sudo pacman -S vlc`
+      - **macOS**: Install VLC from official `.dmg` or `brew install vlc`.
+
+  - id: "requiring_emerald"
+    title: "Requiring Emerald"
+    summary: "Importing emerald into your project."
+    content: |
+      In your game's main entry point (e.g. `src/main.cr`):
+
+      ```crystal
+      require "lapis"
+      require "emerald"
+      ```
+
+      Requiring `emerald` automatically registers `EmeraldVideoPlayer`, `EmeraldAudioPlayer`, and `EmeraldVideoPlayer3D` with Godot's `ClassDB`.

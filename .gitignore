@@ -1,0 +1,12 @@
+/bin/
+/lib/
+/*.dll
+*.exe
+*.pdb
+*.obj
+*.o
+.crystal/
+.shards/
+.godot/
+docs/
+

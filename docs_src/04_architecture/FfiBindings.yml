@@ -1,0 +1,24 @@
+id: "FfiBindings"
+title: "LibVLC C-FFI Architecture"
+summary: "Low-overhead direct C bindings, memory management, and platform discovery."
+track: "architecture"
+
+sections:
+  - id: "direct_c_abi"
+    title: "Direct C ABI Integration"
+    summary: "Zero-overhead Crystal FFI bindings to LibVLC functions."
+    content: |
+      Emerald interfaces directly with `libvlc.dll` (Windows), `libvlc.so` (Linux), and `libvlc.dylib` (macOS) using Crystal's native C FFI (`lib LibVLC ... end`).
+
+      By utilizing direct method bindings rather than intermediary script bridges:
+      - Memory overhead is negligible.
+      - Function calls execute at pure machine code speeds.
+      - Zero runtime translation layers exist between Crystal and VLC.
+
+  - id: "runtime_discovery"
+    title: "Automatic Runtime Discovery"
+    summary: "Locating native LibVLC binaries and plugin paths automatically."
+    content: |
+      Emerald's `Environment` module automatically discovers the native VLC installation directory:
+      - Sets the Windows DLL search directory via `SetDllDirectoryA`.
+      - Injects the `VLC_PLUGIN_PATH` environment variable so decoder plugins (FFmpeg, A52, FLAC, Vorbis) are located on startup.
