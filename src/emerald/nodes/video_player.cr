@@ -69,7 +69,7 @@ node EmeraldVideoPlayer < Control do
       current_time = p.time_ms
       if current_time >= 0 && current_time != @last_reported_time
         @last_reported_time = current_time
-        emit_position_changed(p.position.to_f64, current_time)
+        position_changed.emit(p.position.to_f64, current_time)
       end
 
       # Update video texture from double-buffered frame surface
@@ -108,13 +108,13 @@ node EmeraldVideoPlayer < Control do
     player.media = @media
 
     # Wire up player events to Godot signals
-    player.event_manager.on_playing = ->{ emit_playback_started }
-    player.event_manager.on_paused = ->{ emit_playback_paused }
-    player.event_manager.on_stopped = ->{ emit_playback_stopped }
-    player.event_manager.on_ended = ->{ emit_playback_finished }
-    player.event_manager.on_error = ->(err : String) { emit_error_occurred(err) }
+    player.event_manager.on_playing = ->{ playback_started.emit; nil }
+    player.event_manager.on_paused = ->{ playback_paused.emit; nil }
+    player.event_manager.on_stopped = ->{ playback_stopped.emit; nil }
+    player.event_manager.on_ended = ->{ playback_finished.emit; nil }
+    player.event_manager.on_error = ->(err : String) { error_occurred.emit(err); nil }
 
-    emit_metadata_loaded
+    metadata_loaded.emit
     true
   end
 
@@ -124,7 +124,7 @@ node EmeraldVideoPlayer < Control do
       p.volume = volume
       p.playback_rate = playback_rate.to_f32
       res = p.play
-      emit_playback_resumed if res
+      playback_resumed.emit if res
       res
     elsif !source.empty?
       open(source)
@@ -137,7 +137,7 @@ node EmeraldVideoPlayer < Control do
   # Pauses video playback
   def pause : Void
     @player.try(&.pause)
-    emit_playback_paused
+    playback_paused.emit
   end
 
   # Toggles between play and pause
@@ -152,7 +152,7 @@ node EmeraldVideoPlayer < Control do
   # Stops video playback and resets position
   def stop : Void
     @player.try(&.stop)
-    emit_playback_stopped
+    playback_stopped.emit
   end
 
   # Returns true if currently playing
@@ -186,7 +186,7 @@ node EmeraldVideoPlayer < Control do
   def select_subtitle_track(track_id : Int32) : Void
     if p = @player
       p.subtitle_track = track_id
-      emit_track_changed("subtitle", track_id)
+      track_changed.emit("subtitle", track_id)
     end
   end
 
@@ -204,7 +204,7 @@ node EmeraldVideoPlayer < Control do
   def select_audio_track(track_id : Int32) : Void
     if p = @player
       p.audio_track = track_id
-      emit_track_changed("audio", track_id)
+      track_changed.emit("audio", track_id)
     end
   end
 
@@ -222,7 +222,7 @@ node EmeraldVideoPlayer < Control do
   def select_video_track(track_id : Int32) : Void
     if p = @player
       p.video_track = track_id
-      emit_track_changed("video", track_id)
+      track_changed.emit("video", track_id)
     end
   end
 
@@ -297,7 +297,7 @@ node EmeraldVideoPlayer < Control do
         tex.set_image(img)
         @texture = tex
         @texture_rect.try(&.set_texture(tex))
-        emit_length_changed(@player.try(&.length_ms) || 0_i64)
+        length_changed.emit(@player.try(&.length_ms) || 0_i64)
       end
 
       # Transfer decoded pixel buffer into Godot Image

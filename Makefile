@@ -53,6 +53,9 @@ dirs:
 
 deps: dirs
 	@$(LAPIS) deps -t $(ADDON_BIN_DIR)
+ifeq ($(OS),Windows_NT)
+	@powershell -NoProfile -Command "if (Test-Path 'C:\Program Files\VideoLAN\VLC\libvlc.dll') { Copy-Item 'C:\Program Files\VideoLAN\VLC\libvlc.dll', 'C:\Program Files\VideoLAN\VLC\libvlccore.dll' -Destination '$(ADDON_BIN_DIR)' -Force; Write-Host '[Addon] Copied LibVLC runtime DLLs to $(ADDON_BIN_DIR)' }"
+endif
 
 bridge: dirs
 	@$(LAPIS) sync

@@ -16,9 +16,12 @@ macos.debug.x86_64 = "res://addons/emerald/bin/crystal_bridge.dylib"
 macos.release.x86_64 = "res://addons/emerald/bin/crystal_bridge.dylib"
 
 [dependencies]
+windows.debug.x86_64 = { "res://addons/emerald/bin/libvlccore.dll": "", "res://addons/emerald/bin/libvlc.dll": "" }
+windows.release.x86_64 = { "res://addons/emerald/bin/libvlccore.dll": "", "res://addons/emerald/bin/libvlc.dll": "" }
 macos.debug = { "res://addons/emerald/bin/game.dylib": "" }
 macos.release = { "res://addons/emerald/bin/game.dylib": "" }
 macos.debug.arm64 = { "res://addons/emerald/bin/game.dylib": "" }
 macos.release.arm64 = { "res://addons/emerald/bin/game.dylib": "" }
 macos.debug.x86_64 = { "res://addons/emerald/bin/game.dylib": "" }
 macos.release.x86_64 = { "res://addons/emerald/bin/game.dylib": "" }
+

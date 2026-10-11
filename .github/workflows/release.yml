@@ -54,7 +54,7 @@ jobs:
           if [ -f "godot-version.yml" ]; then
             GODOT_VER=$(sed -n 's/.*version:[[:space:]]*["'"'"']\?\([^"'"'"']\+\)["'"'"']\?.*/\1/p' godot-version.yml | tr -d '\r\n[:space:]')
           fi
-          if [ -z "$GODOT_VER" ]; then GODOT_VER="4.8-dev6"; fi
+          if [ -z "$GODOT_VER" ]; then GODOT_VER="4.8-dev7"; fi
           echo "godot_version=$GODOT_VER" >> "$GITHUB_OUTPUT"
           echo "Resolved Godot Version: $GODOT_VER"
 
@@ -281,7 +281,7 @@ jobs:
         uses: appsinacup/action_setup_godot@main
         with:
           repo: godotengine/godot-builds
-          version: 4.8-dev6
+          version: 4.8-dev7
           enable_cache: true
       - name: Configure Godot Executable (Linux)
         shell: bash
@@ -306,7 +306,7 @@ jobs:
           if [ -f "godot-version.yml" ]; then
             GODOT_VER=$(sed -n 's/.*version:[[:space:]]*["'"'"']\?\([^"'"'"']\+\)["'"'"']\?.*/\1/p' godot-version.yml | tr -d '\r\n[:space:]')
           fi
-          if [ -z "$GODOT_VER" ]; then GODOT_VER="4.8-dev6"; fi
+          if [ -z "$GODOT_VER" ]; then GODOT_VER="4.8-dev7"; fi
 
           if [ ! -f "bin/lapis" ]; then
             echo "Fetching standalone Lapis CLI and bridge for Linux (target $GODOT_VER)..."
@@ -393,7 +393,7 @@ jobs:
         uses: appsinacup/action_setup_godot@main
         with:
           repo: godotengine/godot-builds
-          version: 4.8-dev6
+          version: 4.8-dev7
           enable_cache: true
       - name: Ensure Lapis CLI & Bridge
         shell: bash
@@ -404,7 +404,7 @@ jobs:
           if [ -f "godot-version.yml" ]; then
             GODOT_VER=$(sed -n 's/.*version:[[:space:]]*["'"'"']\?\([^"'"'"']\+\)["'"'"']\?.*/\1/p' godot-version.yml | tr -d '\r\n[:space:]')
           fi
-          if [ -z "$GODOT_VER" ]; then GODOT_VER="4.8-dev6"; fi
+          if [ -z "$GODOT_VER" ]; then GODOT_VER="4.8-dev7"; fi
 
           if [ ! -f "bin/lapis" ]; then
             echo "Fetching standalone Lapis CLI and bridge for macOS (target $GODOT_VER)..."
@@ -465,7 +465,7 @@ jobs:
         uses: appsinacup/action_setup_godot@main
         with:
           repo: godotengine/godot-builds
-          version: 4.8-dev6
+          version: 4.8-dev7
           enable_cache: true
       - name: Configure Godot Executable (Windows)
         shell: pwsh
@@ -495,7 +495,7 @@ jobs:
         run: |
           shards install
           if (-not (Test-Path "bin")) { New-Item -ItemType Directory -Path "bin" -Force }
-          $godotVer = "4.8-dev6"
+          $godotVer = "4.8-dev7"
           if (Test-Path "godot-version.yml") {
             $content = Get-Content "godot-version.yml" -Raw
             if ($content -match 'version:\s*[''"]?([^''"\r\n]+)[''"]?') {
@@ -565,6 +565,9 @@ jobs:
           }
           if (Test-Path "bin/lapis.exe") {
             ./bin/lapis.exe deps -t "addons/$addonName/bin"
+          }
+          if (Test-Path "C:\Program Files\VideoLAN\VLC\libvlc.dll") {
+            Copy-Item "C:\Program Files\VideoLAN\VLC\libvlc.dll", "C:\Program Files\VideoLAN\VLC\libvlccore.dll" -Destination "addons/$addonName/bin" -Force
           }
 
       - name: Upload Core Binaries (Windows)

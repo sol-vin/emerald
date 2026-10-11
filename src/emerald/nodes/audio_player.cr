@@ -60,7 +60,7 @@ node EmeraldAudioPlayer < Node do
       current_time = p.time_ms
       if current_time >= 0 && current_time != @last_reported_time
         @last_reported_time = current_time
-        emit_position_changed(p.position.to_f64, current_time)
+        position_changed.emit(p.position.to_f64, current_time)
       end
     end
   end
@@ -91,13 +91,13 @@ node EmeraldAudioPlayer < Node do
     end
 
     # Wire up player events to Godot signals
-    player.event_manager.on_playing = ->{ emit_playback_started }
-    player.event_manager.on_paused = ->{ emit_playback_paused }
-    player.event_manager.on_stopped = ->{ emit_playback_stopped }
-    player.event_manager.on_ended = ->{ emit_playback_finished }
-    player.event_manager.on_error = ->(err : String) { emit_error_occurred(err) }
+    player.event_manager.on_playing = ->{ playback_started.emit; nil }
+    player.event_manager.on_paused = ->{ playback_paused.emit; nil }
+    player.event_manager.on_stopped = ->{ playback_stopped.emit; nil }
+    player.event_manager.on_ended = ->{ playback_finished.emit; nil }
+    player.event_manager.on_error = ->(err : String) { error_occurred.emit(err); nil }
 
-    emit_metadata_loaded
+    metadata_loaded.emit
     true
   end
 
@@ -107,7 +107,7 @@ node EmeraldAudioPlayer < Node do
       p.volume = volume
       p.playback_rate = playback_rate.to_f32
       res = p.play
-      emit_playback_resumed if res
+      playback_resumed.emit if res
       res
     elsif !source.empty?
       open(source)
@@ -120,7 +120,7 @@ node EmeraldAudioPlayer < Node do
   # Pauses audio playback
   def pause : Void
     @player.try(&.pause)
-    emit_playback_paused
+    playback_paused.emit
   end
 
   # Toggles between play and pause
@@ -135,7 +135,7 @@ node EmeraldAudioPlayer < Node do
   # Stops playback and resets position
   def stop : Void
     @player.try(&.stop)
-    emit_playback_stopped
+    playback_stopped.emit
   end
 
   # Returns true if currently playing
