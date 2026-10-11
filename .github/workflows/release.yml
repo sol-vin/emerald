@@ -159,6 +159,7 @@ jobs:
           if [ -n "$VLC_LIB" ]; then
             VLC_DIR=$(dirname "$VLC_LIB")
             echo "Found LibVLC at $VLC_LIB in $VLC_DIR"
+            sudo mkdir -p /usr/local/lib /opt/homebrew/lib
             sudo ln -sf "$VLC_LIB" /usr/local/lib/libvlc.dylib
             sudo ln -sf "$VLC_LIB" /usr/local/lib/liblibvlc.dylib
             sudo ln -sf "$VLC_LIB" /opt/homebrew/lib/libvlc.dylib
@@ -369,6 +370,7 @@ jobs:
           VLC_LIB=$(find /Applications/VLC.app -name "libvlc*.dylib" 2>/dev/null | head -n 1)
           if [ -n "$VLC_LIB" ]; then
             VLC_DIR=$(dirname "$VLC_LIB")
+            sudo mkdir -p /usr/local/lib /opt/homebrew/lib
             sudo ln -sf "$VLC_LIB" /usr/local/lib/libvlc.dylib
             sudo ln -sf "$VLC_LIB" /usr/local/lib/liblibvlc.dylib
             sudo ln -sf "$VLC_LIB" /opt/homebrew/lib/libvlc.dylib
@@ -624,6 +626,7 @@ jobs:
           VLC_LIB=$(find /Applications/VLC.app -name "libvlc*.dylib" 2>/dev/null | head -n 1)
           if [ -n "$VLC_LIB" ]; then
             VLC_DIR=$(dirname "$VLC_LIB")
+            sudo mkdir -p /usr/local/lib /opt/homebrew/lib
             sudo ln -sf "$VLC_LIB" /usr/local/lib/libvlc.dylib
             sudo ln -sf "$VLC_LIB" /usr/local/lib/liblibvlc.dylib
             sudo ln -sf "$VLC_LIB" /opt/homebrew/lib/libvlc.dylib
