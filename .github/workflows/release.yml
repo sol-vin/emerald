@@ -153,17 +153,30 @@ jobs:
       - name: Install Dependencies
         run: |
           brew install --cask vlc || true
-          if [ -d "/Applications/VLC.app/Contents/MacOS/lib" ]; then
+          echo "Scanning for VLC libraries in /Applications/VLC.app..."
+          find /Applications/VLC.app -name "*vlc*.dylib" 2>/dev/null || true
+          VLC_LIB=$(find /Applications/VLC.app -name "libvlc*.dylib" 2>/dev/null | head -n 1)
+          if [ -n "$VLC_LIB" ]; then
+            VLC_DIR=$(dirname "$VLC_LIB")
+            echo "Found LibVLC at $VLC_LIB in $VLC_DIR"
             sudo mkdir -p /usr/local/lib /opt/homebrew/lib
-            sudo ln -sf /Applications/VLC.app/Contents/MacOS/lib/libvlc*.dylib /opt/homebrew/lib/ 2>/dev/null || true
-            sudo ln -sf /Applications/VLC.app/Contents/MacOS/lib/libvlc*.dylib /usr/local/lib/ 2>/dev/null || true
-            echo "CRYSTAL_LIBRARY_PATH=/Applications/VLC.app/Contents/MacOS/lib" >> "$GITHUB_ENV"
-            echo "DYLD_FALLBACK_LIBRARY_PATH=/Applications/VLC.app/Contents/MacOS/lib" >> "$GITHUB_ENV"
+            sudo ln -sf "$VLC_LIB" /usr/local/lib/libvlc.dylib
+            sudo ln -sf "$VLC_LIB" /opt/homebrew/lib/libvlc.dylib
+            CORE_LIB=$(find /Applications/VLC.app -name "libvlccore*.dylib" 2>/dev/null | head -n 1)
+            if [ -n "$CORE_LIB" ]; then
+              sudo ln -sf "$CORE_LIB" /usr/local/lib/libvlccore.dylib
+              sudo ln -sf "$CORE_LIB" /opt/homebrew/lib/libvlccore.dylib
+            fi
+            if [ ! -f "$VLC_DIR/libvlc.dylib" ]; then
+              sudo ln -sf "$VLC_LIB" "$VLC_DIR/libvlc.dylib" 2>/dev/null || true
+            fi
+            echo "CRYSTAL_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
+            echo "DYLD_FALLBACK_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
           fi
           shards install || true
       - name: Run Specifications
         run: |
-          crystal spec --link-flags "-L/Applications/VLC.app/Contents/MacOS/lib" || crystal spec
+          crystal spec
 
 
   fast-specs-windows:
@@ -349,12 +362,22 @@ jobs:
       - name: Install Dependencies
         run: |
           brew install --cask vlc || true
-          if [ -d "/Applications/VLC.app/Contents/MacOS/lib" ]; then
+          VLC_LIB=$(find /Applications/VLC.app -name "libvlc*.dylib" 2>/dev/null | head -n 1)
+          if [ -n "$VLC_LIB" ]; then
+            VLC_DIR=$(dirname "$VLC_LIB")
             sudo mkdir -p /usr/local/lib /opt/homebrew/lib
-            sudo ln -sf /Applications/VLC.app/Contents/MacOS/lib/libvlc*.dylib /opt/homebrew/lib/ 2>/dev/null || true
-            sudo ln -sf /Applications/VLC.app/Contents/MacOS/lib/libvlc*.dylib /usr/local/lib/ 2>/dev/null || true
-            echo "CRYSTAL_LIBRARY_PATH=/Applications/VLC.app/Contents/MacOS/lib" >> "$GITHUB_ENV"
-            echo "DYLD_FALLBACK_LIBRARY_PATH=/Applications/VLC.app/Contents/MacOS/lib" >> "$GITHUB_ENV"
+            sudo ln -sf "$VLC_LIB" /usr/local/lib/libvlc.dylib
+            sudo ln -sf "$VLC_LIB" /opt/homebrew/lib/libvlc.dylib
+            CORE_LIB=$(find /Applications/VLC.app -name "libvlccore*.dylib" 2>/dev/null | head -n 1)
+            if [ -n "$CORE_LIB" ]; then
+              sudo ln -sf "$CORE_LIB" /usr/local/lib/libvlccore.dylib
+              sudo ln -sf "$CORE_LIB" /opt/homebrew/lib/libvlccore.dylib
+            fi
+            if [ ! -f "$VLC_DIR/libvlc.dylib" ]; then
+              sudo ln -sf "$VLC_LIB" "$VLC_DIR/libvlc.dylib" 2>/dev/null || true
+            fi
+            echo "CRYSTAL_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
+            echo "DYLD_FALLBACK_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
           fi
       - name: Setup Godot Engine
         uses: appsinacup/action_setup_godot@main
@@ -590,15 +613,25 @@ jobs:
       - name: Run Test Suites
         run: |
           brew install --cask vlc || true
-          if [ -d "/Applications/VLC.app/Contents/MacOS/lib" ]; then
+          VLC_LIB=$(find /Applications/VLC.app -name "libvlc*.dylib" 2>/dev/null | head -n 1)
+          if [ -n "$VLC_LIB" ]; then
+            VLC_DIR=$(dirname "$VLC_LIB")
             sudo mkdir -p /usr/local/lib /opt/homebrew/lib
-            sudo ln -sf /Applications/VLC.app/Contents/MacOS/lib/libvlc*.dylib /opt/homebrew/lib/ 2>/dev/null || true
-            sudo ln -sf /Applications/VLC.app/Contents/MacOS/lib/libvlc*.dylib /usr/local/lib/ 2>/dev/null || true
-            echo "CRYSTAL_LIBRARY_PATH=/Applications/VLC.app/Contents/MacOS/lib" >> "$GITHUB_ENV"
-            echo "DYLD_FALLBACK_LIBRARY_PATH=/Applications/VLC.app/Contents/MacOS/lib" >> "$GITHUB_ENV"
+            sudo ln -sf "$VLC_LIB" /usr/local/lib/libvlc.dylib
+            sudo ln -sf "$VLC_LIB" /opt/homebrew/lib/libvlc.dylib
+            CORE_LIB=$(find /Applications/VLC.app -name "libvlccore*.dylib" 2>/dev/null | head -n 1)
+            if [ -n "$CORE_LIB" ]; then
+              sudo ln -sf "$CORE_LIB" /usr/local/lib/libvlccore.dylib
+              sudo ln -sf "$CORE_LIB" /opt/homebrew/lib/libvlccore.dylib
+            fi
+            if [ ! -f "$VLC_DIR/libvlc.dylib" ]; then
+              sudo ln -sf "$VLC_LIB" "$VLC_DIR/libvlc.dylib" 2>/dev/null || true
+            fi
+            echo "CRYSTAL_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
+            echo "DYLD_FALLBACK_LIBRARY_PATH=$VLC_DIR:/opt/homebrew/lib:/usr/local/lib" >> "$GITHUB_ENV"
           fi
           shards install || true
-          crystal spec --link-flags "-L/Applications/VLC.app/Contents/MacOS/lib" || crystal spec
+          crystal spec
 
   test-engine-windows:
     name: Test Engine & Editor (Windows)

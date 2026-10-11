@@ -23,9 +23,37 @@ settings:
       title: "\U0001F6E0️ Chores & Tooling"
       bullet: •
 releases:
-- version: 0.1.4
+- version: 0.1.5
   date: "2026-10-11"
   status: active
+  entries:
+  - type: feat
+    description: initial release of Emerald LibVLC bindings and media player nodes
+      for Lapis
+    bullet: ✦
+    hash: 0d627b7
+    author: Ian Rash
+  - type: feat
+    description: add release CI workflow for Godot addon packaging
+    bullet: ✦
+    badge: '[CI]'
+    hash: e5982b3
+    author: Ian Rash
+  - type: fix
+    description: track compiled src/docs by scoping root /docs in gitignore
+    bullet: ✓
+    badge: '[DOCS]'
+    hash: 4d1a1ed
+    author: Ian Rash
+  - type: fix
+    description: configure libvlc paths for macOS and ensure VLC on Windows test runner
+    bullet: ✓
+    badge: '[CI]'
+    hash: e449653
+    author: Ian Rash
+- version: 0.1.4
+  date: "2026-10-11"
+  status: released
   entries:
   - type: feat
     description: initial release of Emerald LibVLC bindings and media player nodes
