@@ -8,6 +8,7 @@ module Emerald
       {% if flag?(:windows) %}
         lib Kernel32
           fun SetDllDirectoryA(path_name : LibC::Char*) : LibC::Int
+          fun SetEnvironmentVariableA(name : LibC::Char*, value : LibC::Char*) : LibC::Int
         end
       {% end %}
 
@@ -55,10 +56,23 @@ module Emerald
           return env_plugins if File.directory?(env_plugins)
         end
 
-        if vlc_dir = find_vlc_directory
-          sub = File.join(vlc_dir, "plugins")
+        # Check in Godot project settings if available
+        if !Godot::ProjectSettings.singleton_ptr.null?
+          ps = Godot::ProjectSettings.new(Godot::ProjectSettings.singleton_ptr)
+          addon_plugins = ps.call_str("globalize_path", "res://addons/emerald/bin/plugins").gsub('\\', '/')
+          return addon_plugins if File.directory?(addon_plugins)
+        end
+
+        # Check relative to working directory
+        ["addons/emerald/bin/plugins", "bin/plugins", "plugins"].each do |rel|
+          expanded = File.expand_path(rel)
+          return expanded if File.directory?(expanded)
+        end
+
+        search_candidates.each do |dir|
+          sub = File.join(dir, "plugins")
           return sub if File.directory?(sub)
-          return vlc_dir if File.directory?(vlc_dir)
+          return dir if File.directory?(dir) && File.file?(File.join(dir, "libvlc.dll"))
         end
 
         nil
@@ -83,6 +97,9 @@ module Emerald
 
         if plugins_dir = find_plugins_directory
           ENV["VLC_PLUGIN_PATH"] ||= plugins_dir
+          {% if flag?(:windows) %}
+            Kernel32.SetEnvironmentVariableA("VLC_PLUGIN_PATH", plugins_dir)
+          {% end %}
         end
 
         @@initialized = true

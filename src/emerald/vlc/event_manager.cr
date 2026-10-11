@@ -20,7 +20,7 @@ module Emerald
 
       getter handle : LibVLC::EventManager
       @queue : Array(QueuedEvent)
-      @mutex : Thread::Mutex
+      @mutex : ::Mutex
       @c_callback : LibVLC::EventCallback
 
       # Crystal callbacks registered by player or node
@@ -35,7 +35,7 @@ module Emerald
 
       def initialize(@handle : LibVLC::EventManager)
         @queue = Array(QueuedEvent).new
-        @mutex = Thread::Mutex.new
+        @mutex = ::Mutex.new
 
         # Native C callback trampoline
         @c_callback = ->(event_ptr : LibVLC::Event*, user_data : Void*) {

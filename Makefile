@@ -10,7 +10,7 @@ ifeq ($(OS),Windows_NT)
 	PLATFORM        = windows
 	SO_EXT          = dll
 	EXE_EXT         = .exe
-	GODOT           ?= $(if $(wildcard ./godot.exe),./godot.exe,$(if $(wildcard ../godot.exe),../godot.exe,godot.exe))
+	GODOT           ?= $(if $(wildcard ./godot.exe),./godot.exe,$(if $(wildcard ../libgodot/godot.exe),../libgodot/godot.exe,$(if $(wildcard ../godot.exe),../godot.exe,godot.exe)))
 	LINK_FLAGS      ?= /DLL /ENTRY:_DllMainCRTStartup /EXPORT:crystal_godot_init
 else
 	UNAME_S := $(shell uname -s 2>/dev/null)

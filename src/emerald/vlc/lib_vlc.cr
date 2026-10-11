@@ -1,7 +1,7 @@
 module Emerald
   module VLC
     {% if flag?(:windows) %}
-      @[Link("libvlc")]
+      @[Link(ldflags: "#{__DIR__}/../../../ext/libvlc/libvlc.lib")]
     {% else %}
       @[Link("vlc")]
     {% end %}

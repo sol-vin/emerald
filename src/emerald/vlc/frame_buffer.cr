@@ -11,7 +11,7 @@ module Emerald
         @has_new_frame
       end
 
-      @mutex : Thread::Mutex
+      @mutex : ::Mutex
       @buffer_a : Slice(UInt8)
       @buffer_b : Slice(UInt8)
       @write_buffer : Slice(UInt8)
@@ -19,7 +19,7 @@ module Emerald
 
       def initialize(@width : UInt32 = 0_u32, @height : UInt32 = 0_u32)
         @pitch = @width * 4_u32
-        @mutex = Thread::Mutex.new
+        @mutex = ::Mutex.new
 
         size = (@pitch * @height).to_i32
         if size > 0

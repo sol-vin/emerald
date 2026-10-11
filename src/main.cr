@@ -15,10 +15,13 @@ node EmeraldPlugin < EditorPlugin do
       Godot.print("  LibVLC status: #{ex.message}")
     end
     Godot.print("  Nodes: EmeraldVideoPlayer, EmeraldAudioPlayer, EmeraldVideoPlayer3D")
+    Godot.print("  Resources: EmeraldMediaResource, ResourceFormatLoaderEmerald")
     Godot.print("==================================================================")
+    Emerald::ResourceFormatLoaderEmerald.ensure_registered
   end
 
   def _exit_tree : Void
+    Emerald::ResourceFormatLoaderEmerald.unregister
     Godot.print("  [Emerald] LibVLC Multimedia Playback Plugin disabled.")
   end
 end

@@ -12,4 +12,9 @@
 /dist/
 /staging/
 addons/*/bin/
+log/
+scripts/dump_project_nodes.gd
+src/generated/
+godot-version.yml
+*.log
 

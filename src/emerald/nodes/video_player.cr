@@ -5,6 +5,9 @@ require "../vlc/*"
 # Provides seamless rendering to Godot textures, external subtitles, multi-track selection,
 # and in-editor property inspection.
 node EmeraldVideoPlayer < Control do
+  @[Export]
+  property media_resource : EmeraldMediaResource? = nil
+
   @[ExportFile("*.mp4,*.mkv,*.avi,*.webm,*.mov,*.flv,*.ts,*.m3u8,*.mp3,*.wav,*.ogg,*.flac")]
   property source : String = ""
 
@@ -49,8 +52,15 @@ node EmeraldVideoPlayer < Control do
 
   def _ready : Void
     setup_texture_rect
-    unless source.empty?
-      open(source)
+    ResourceFormatLoaderEmerald.ensure_registered rescue nil
+
+    target_source = source
+    if target_source.empty? && (mr = media_resource)
+      target_source = mr.file_path
+    end
+
+    unless target_source.empty?
+      open(target_source)
       play if autoplay
     end
   end
@@ -92,30 +102,36 @@ node EmeraldVideoPlayer < Control do
   def open(media_path : String) : Bool
     return false if media_path.empty?
 
-    resolved_path = resolve_source_path(media_path)
-    @media = Emerald::VLC::Media.new(resolved_path)
-    player = Emerald::VLC::MediaPlayer.new
-    @player = player
+    begin
+      resolved_path = resolve_source_path(media_path)
+      @media = Emerald::VLC::Media.new(resolved_path)
+      player = Emerald::VLC::MediaPlayer.new
+      @player = player
 
-    # Setup frame buffer for video decoding
-    fb = Emerald::VLC::VideoFrameBuffer.new
-    @frame_buffer = fb
-    player.enable_video_callbacks(fb)
+      # Setup frame buffer for video decoding
+      fb = Emerald::VLC::VideoFrameBuffer.new
+      @frame_buffer = fb
+      player.enable_video_callbacks(fb)
 
-    # Apply configuration
-    player.volume = volume
-    player.playback_rate = playback_rate.to_f32
-    player.media = @media
+      # Apply configuration
+      player.volume = volume
+      player.playback_rate = playback_rate.to_f32
+      player.media = @media
 
-    # Wire up player events to Godot signals
-    player.event_manager.on_playing = ->{ playback_started.emit; nil }
-    player.event_manager.on_paused = ->{ playback_paused.emit; nil }
-    player.event_manager.on_stopped = ->{ playback_stopped.emit; nil }
-    player.event_manager.on_ended = ->{ playback_finished.emit; nil }
-    player.event_manager.on_error = ->(err : String) { error_occurred.emit(err); nil }
+      # Wire up player events to Godot signals
+      player.event_manager.on_playing = ->{ playback_started.emit; nil }
+      player.event_manager.on_paused = ->{ playback_paused.emit; nil }
+      player.event_manager.on_stopped = ->{ playback_stopped.emit; nil }
+      player.event_manager.on_ended = ->{ playback_finished.emit; nil }
+      player.event_manager.on_error = ->(err : String) { error_occurred.emit(err); nil }
 
-    metadata_loaded.emit
-    true
+      metadata_loaded.emit
+      true
+    rescue ex
+      Godot.printerr("[EmeraldVideoPlayer] Failed to open '#{media_path}': #{ex.message}")
+      error_occurred.emit(ex.message || "Failed to open media")
+      false
+    end
   end
 
   # Starts or resumes video playback
@@ -127,8 +143,11 @@ node EmeraldVideoPlayer < Control do
       playback_resumed.emit if res
       res
     elsif !source.empty?
-      open(source)
-      play
+      if open(source)
+        play
+      else
+        false
+      end
     else
       false
     end
@@ -289,8 +308,7 @@ node EmeraldVideoPlayer < Control do
         @current_width = w
         @current_height = h
 
-        img = Godot.create(Godot::Image)
-        img.create_empty(w.to_i64, h.to_i64, false, Godot::Image::Format::FormatRgba8.value)
+        img = Godot::Image.create_from_buffer(w.to_i32, h.to_i32, Godot::Image::Format::FormatRgba8, pixels, false)
         @image = img
 
         tex = Godot.create(Godot::ImageTexture)
@@ -298,12 +316,10 @@ node EmeraldVideoPlayer < Control do
         @texture = tex
         @texture_rect.try(&.set_texture(tex))
         length_changed.emit(@player.try(&.length_ms) || 0_i64)
-      end
-
-      # Transfer decoded pixel buffer into Godot Image
-      if img = @image
+      elsif img = @image
         if tex = @texture
-          # Fast update of texture
+          # Fast-path zero-copy blit from LibVLC pixel buffer into Godot Image
+          img.update_buffer(w.to_i32, h.to_i32, Godot::Image::Format::FormatRgba8, pixels, false)
           tex.update(img)
         end
       end
@@ -311,14 +327,7 @@ node EmeraldVideoPlayer < Control do
   end
 
   private def resolve_source_path(path : String) : String
-    return path if path =~ %r{^[a-zA-Z][a-zA-Z0-9+-.]*://}
-    if path.starts_with?("res://")
-      # Resolve res:// using Godot ProjectSettings
-      Godot.to_godot_res_path(path)
-      File.expand_path(path.sub("res://", ""))
-    else
-      File.expand_path(path)
-    end
+    Emerald.resolve_source_path(path)
   end
 end
 

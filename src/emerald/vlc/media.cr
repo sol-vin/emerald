@@ -9,14 +9,18 @@ module Emerald
       def initialize(source : String, instance : Instance? = nil)
         @instance = instance || Instance.default
 
-        # Auto-detect if source is a URL/network stream or local file
-        if source =~ %r{^[a-zA-Z][a-zA-Z0-9+-.]*://}
-          # Normalize file:// URLs or keep streaming protocols (http, https, rtsp, rtmp)
+        # Auto-detect if source is a network stream or local file
+        if source =~ %r{^(http|https|rtsp|rtmp|mms|udp|tcp|ftp)://}i
           @mrl = source
           @handle = LibVLC.libvlc_media_new_location(@instance.handle, source)
         else
-          # Local file path
-          resolved_path = File.expand_path(source)
+          # Local file path or file:// URL
+          local_path = if source.starts_with?("file://")
+                         source.sub(%r{^file:///?}, "")
+                       else
+                         source
+                       end
+          resolved_path = File.expand_path(local_path)
           @mrl = resolved_path
           @handle = LibVLC.libvlc_media_new_path(@instance.handle, resolved_path)
         end
