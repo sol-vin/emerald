@@ -15,6 +15,11 @@ require "./emerald/nodes/video_player_3d"
 
 # Root namespace for the Emerald library
 module Emerald
+  alias Instance = VLC::Instance
+  alias MediaPlayer = VLC::MediaPlayer
+  alias Media = VLC::Media
+  alias Equalizer = VLC::Equalizer
+  alias Metadata = VLC::Metadata
 end
 
 {% unless flag?(:release) %}

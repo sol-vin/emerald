@@ -9,4 +9,7 @@
 .shards/
 .godot/
 docs/
+dist/
+staging/
+addons/*/bin/
 

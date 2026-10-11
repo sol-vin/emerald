@@ -1,0 +1,14 @@
+name: emerald
+version: 0.1.1
+authors:
+  - Ian Rash <redcodefinal@gmail.com>
+license: MIT
+
+dependencies:
+  lapis:
+    github: sol-vin/lapis
+    branch: master
+
+targets:
+  addon:
+    main: src/main.cr

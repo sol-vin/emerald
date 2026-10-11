@@ -1,5 +1,5 @@
 name: emerald
-version: 0.1.1
+version: 0.1.2
 
 authors:
   - Ian Rash <redcodefinal@gmail.com>
@@ -29,4 +29,6 @@ targets:
     main: lib/jasper/src/jasper_cli.cr
   emerald-inspect:
     main: examples/01_cli_metadata_inspector.cr
+  addon:
+    main: src/main.cr
 
