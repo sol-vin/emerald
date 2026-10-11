@@ -206,7 +206,20 @@ jobs:
         shell: pwsh
         run: |
           if (-not (Test-Path "C:\Program Files\VideoLAN\VLC\libvlc.dll")) {
-            choco install vlc -y --no-progress
+            $installed = $false
+            for ($attempt = 1; $attempt -le 3; $attempt++) {
+              Write-Host "Installing VLC via Chocolatey (attempt $attempt)..."
+              choco install vlc -y --no-progress
+              if (Test-Path "C:\Program Files\VideoLAN\VLC\libvlc.dll") {
+                $installed = $true
+                break
+              }
+              Start-Sleep -Seconds 3
+            }
+            if (-not $installed) {
+              Write-Host "Chocolatey failed, trying winget..."
+              winget install VideoLAN.VLC --accept-source-agreements --accept-package-agreements --silent
+            }
           }
           if (Test-Path "ext/libvlc") {
             $vlcLib = (Resolve-Path "ext/libvlc").Path
@@ -533,7 +546,20 @@ jobs:
         shell: pwsh
         run: |
           if (-not (Test-Path "C:\Program Files\VideoLAN\VLC\libvlc.dll")) {
-            choco install vlc -y --no-progress
+            $installed = $false
+            for ($attempt = 1; $attempt -le 3; $attempt++) {
+              Write-Host "Installing VLC via Chocolatey (attempt $attempt)..."
+              choco install vlc -y --no-progress
+              if (Test-Path "C:\Program Files\VideoLAN\VLC\libvlc.dll") {
+                $installed = $true
+                break
+              }
+              Start-Sleep -Seconds 3
+            }
+            if (-not $installed) {
+              Write-Host "Chocolatey failed, trying winget..."
+              winget install VideoLAN.VLC --accept-source-agreements --accept-package-agreements --silent
+            }
           }
           if (Test-Path "ext/libvlc") {
             $vlcLib = (Resolve-Path "ext/libvlc").Path
@@ -675,7 +701,20 @@ jobs:
         shell: pwsh
         run: |
           if (-not (Test-Path "C:\Program Files\VideoLAN\VLC\libvlc.dll")) {
-            choco install vlc -y --no-progress
+            $installed = $false
+            for ($attempt = 1; $attempt -le 3; $attempt++) {
+              Write-Host "Installing VLC via Chocolatey (attempt $attempt)..."
+              choco install vlc -y --no-progress
+              if (Test-Path "C:\Program Files\VideoLAN\VLC\libvlc.dll") {
+                $installed = $true
+                break
+              }
+              Start-Sleep -Seconds 3
+            }
+            if (-not $installed) {
+              Write-Host "Chocolatey failed, trying winget..."
+              winget install VideoLAN.VLC --accept-source-agreements --accept-package-agreements --silent
+            }
           }
           if (Test-Path "ext/libvlc") {
             $vlcLib = (Resolve-Path "ext/libvlc").Path

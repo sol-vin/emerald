@@ -23,9 +23,82 @@ settings:
       title: "\U0001F6E0️ Chores & Tooling"
       bullet: •
 releases:
-- version: 0.1.11
+- version: 0.1.12
   date: "2026-10-11"
   status: active
+  entries:
+  - type: feat
+    description: initial release of Emerald LibVLC bindings and media player nodes
+      for Lapis
+    bullet: ✦
+    hash: 0d627b7
+    author: Ian Rash
+  - type: feat
+    description: add release CI workflow for Godot addon packaging
+    bullet: ✦
+    badge: '[CI]'
+    hash: e5982b3
+    author: Ian Rash
+  - type: fix
+    description: track compiled src/docs by scoping root /docs in gitignore
+    bullet: ✓
+    badge: '[DOCS]'
+    hash: 4d1a1ed
+    author: Ian Rash
+  - type: fix
+    description: configure libvlc paths for macOS and ensure VLC on Windows test runner
+    bullet: ✓
+    badge: '[CI]'
+    hash: e449653
+    author: Ian Rash
+  - type: fix
+    description: robustly locate and symlink LibVLC dylibs on macOS runners
+    bullet: ✓
+    badge: '[CI]'
+    hash: 98e5826
+    author: Ian Rash
+  - type: fix
+    description: link against vlc on Unix and libvlc on Windows with dual symlink
+      fallback
+    bullet: ✓
+    badge: '[VLC]'
+    hash: 5b8fa27
+    author: Ian Rash
+  - type: fix
+    description: ensure /usr/local/lib and /opt/homebrew/lib exist on macOS runners
+    bullet: ✓
+    badge: '[CI]'
+    hash: f071609
+    author: Ian Rash
+  - type: fix
+    description: embed rpath and export dyld library path in test-engine-macos
+    bullet: ✓
+    badge: '[CI]'
+    hash: 1279bec
+    author: Ian Rash
+  - type: fix
+    description: resolve EmeraldPlugin base class parse error, bundle VLC DLLs, and
+      align with Lapis 0.0.290
+    bullet: ✓
+    badge: '[GODOT]'
+    hash: de9e4e4
+    author: Ian Rash
+  - type: feat
+    description: fast-path 60fps video blitting, resource format loader, and windows
+      msvc fixes
+    bullet: ✦
+    badge: '[VIDEO]'
+    hash: 6c09f78
+    author: Ian Rash
+  - type: chore
+    description: update lapis shard to 4.8-dev7 commit 8595d2d
+    bullet: •
+    badge: '[DEPS]'
+    hash: 16cbe26
+    author: Ian Rash
+- version: 0.1.11
+  date: "2026-10-11"
+  status: released
   entries:
   - type: feat
     description: initial release of Emerald LibVLC bindings and media player nodes
