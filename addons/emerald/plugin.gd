@@ -17,12 +17,12 @@ func _enter_tree():
 			ResourceLoader.add_resource_format_loader(_loader)
 			print("  [Emerald] Registered ResourceFormatLoaderEmerald with ResourceLoader")
 
-	# Request immediate EditorFileSystem rescan so multimedia files (.mp4, .mkv, etc.) show up in the dock
+	# Request EditorFileSystem scan only if not already scanning (prevents interrupting first_scan_filesystem)
 	var ei = get_editor_interface()
 	if ei:
 		var efs = ei.get_resource_filesystem()
-		if efs:
-			efs.scan()
+		if efs and not efs.is_scanning():
+			efs.call_deferred("scan")
 	print("==================================================================")
 
 func _exit_tree():

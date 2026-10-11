@@ -1,4 +1,6 @@
 # CARBON CHANGELOG
+## [0.1.14] - 2026-10-11
+---
 ## [0.1.13] - 2026-10-11
 ### ✨ Features & Improvements
 - ✦ initial release of Emerald LibVLC bindings and media player nodes for Lapis ([`0d627b7`](https://github.com/sol-vin/emerald/commit/0d627b7))
