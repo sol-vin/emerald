@@ -1,4 +1,9 @@
 # CARBON CHANGELOG
+## [0.1.17] - 2026-10-11
+### 🐛 Bug Fixes
+- ✓ register shutdown callback and unreference RefCounted loader on unregister
+
+---
 ## [0.1.16] - 2026-10-11
 ---
 ## [0.1.15] - 2026-10-11

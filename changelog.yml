@@ -23,9 +23,16 @@ settings:
       title: "\U0001F6E0️ Chores & Tooling"
       bullet: •
 releases:
-- version: 0.1.16
+- version: 0.1.17
   date: "2026-10-11"
   status: active
+  entries:
+  - type: fix
+    description: register shutdown callback and unreference RefCounted loader on unregister
+    bullet: ✓
+- version: 0.1.16
+  date: "2026-10-11"
+  status: released
   entries: []
 - version: 0.1.15
   date: "2026-10-11"

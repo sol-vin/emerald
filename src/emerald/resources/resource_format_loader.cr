@@ -44,6 +44,9 @@ node ResourceFormatLoaderEmerald < ResourceFormatLoader do
           r_loader.call("add_resource_format_loader", loader, true) rescue nil
         end
         @@registered = true
+        Bridge.register_shutdown_callback do
+          ResourceFormatLoaderEmerald.unregister
+        end
         Godot.print("[Emerald] Registered ResourceFormatLoaderEmerald with ResourceLoader")
       else
         Godot.printerr("[Emerald] Failed to create ResourceFormatLoaderEmerald instance")
@@ -73,7 +76,11 @@ node ResourceFormatLoaderEmerald < ResourceFormatLoader do
       end
 
       if loader.alive?
-        loader.destroy rescue nil
+        if loader.is_a?(Godot::RefCounted)
+          loader.unreference rescue nil
+        else
+          loader.destroy rescue nil
+        end
       end
       loader = nil
       @@instance = nil
