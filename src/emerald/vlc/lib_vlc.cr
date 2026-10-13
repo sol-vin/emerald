@@ -232,6 +232,8 @@ module Emerald
       fun libvlc_media_tracks_get(media : Media, tracks : MediaTrack***) : LibC::UInt
       fun libvlc_media_tracks_release(tracks : MediaTrack**, count : LibC::UInt) : Void
       fun libvlc_media_slaves_add(media : Media, slave_type : MediaSlaveType, priority : LibC::UInt, uri : LibC::Char*) : LibC::Int
+      fun libvlc_media_add_option(media : Media, options : LibC::Char*) : Void
+      fun libvlc_media_add_option_flag(media : Media, options : LibC::Char*, flags : LibC::UInt) : Void
 
       # Media Player functions
       fun libvlc_media_player_new(instance : Instance) : MediaPlayer

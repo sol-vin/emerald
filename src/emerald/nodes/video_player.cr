@@ -26,6 +26,18 @@ node EmeraldVideoPlayer < Control do
   @[ExportEnum("Fit", "Fill", "Stretch", "Center")]
   property aspect_mode : String = "Fit"
 
+  @[ExportEnum("Auto", "None", "D3D11VA", "DXVA2", "VAAPI", "VDPAU", "VideoToolbox", "MediaCodec", "NVDEC")]
+  property hardware_acceleration : String = "Auto"
+
+  @[ExportRange(0, 32, 1)]
+  property decoding_threads : Int32 = 0
+
+  @[Export]
+  property low_latency : Bool = true
+
+  @[Export]
+  property drop_late_frames : Bool = true
+
   # Playback lifecycle signals
   signal playback_started
   signal playback_paused
@@ -98,13 +110,36 @@ node EmeraldVideoPlayer < Control do
     @frame_buffer = nil
   end
 
-  # Opens a video file or network stream
-  def open(media_path : String) : Bool
+  # Builds the Core::VideoDecoderConfig from node properties
+  def decoder_config : Emerald::Core::VideoDecoderConfig
+    hw_mode = Emerald::Core::HardwareAcceleration.parse?(hardware_acceleration) || Emerald::Core::HardwareAcceleration::Auto
+    Emerald::Core::VideoDecoderConfig.new(
+      hardware_acceleration: hw_mode,
+      thread_count: decoding_threads,
+      low_latency: low_latency,
+      drop_late_frames: drop_late_frames
+    )
+  end
+
+  # Opens a video file or network stream with a declarative DSL configuration block
+  def open(media_path : String, &block : Emerald::DSL::MediaBuilder ->) : Bool
+    builder = Emerald::DSL::MediaBuilder.new(media_path)
+    builder.hw_accel(hardware_acceleration)
+    builder.threads(decoding_threads)
+    builder.low_latency(low_latency)
+    builder.drop_late_frames(drop_late_frames)
+    yield builder
+    open(media_path, builder.to_config)
+  end
+
+  # Opens a video file or network stream with an explicit decoder configuration
+  def open(media_path : String, config : Emerald::Core::VideoDecoderConfig? = nil) : Bool
     return false if media_path.empty?
 
     begin
       resolved_path = resolve_source_path(media_path)
-      @media = Emerald::VLC::Media.new(resolved_path)
+      active_config = config || decoder_config
+      @media = Emerald::VLC::Media.new(resolved_path, nil, active_config)
       player = Emerald::VLC::MediaPlayer.new
       @player = player
 

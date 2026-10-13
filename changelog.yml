@@ -23,9 +23,18 @@ settings:
       title: "\U0001F6E0️ Chores & Tooling"
       bullet: •
 releases:
+- version: 0.1.18
+  date: "2026-10-13"
+  status: active
+  entries:
+  - type: feat
+    description: implement hardware video acceleration (D3D11VA, DXVA2, VAAPI, VDPAU,
+      VideoToolbox, MediaCodec, NVDEC) with Two-Tier Core/DSL architecture
+    bullet: ✦
+    badge: '[HW-ACCEL]'
 - version: 0.1.17
   date: "2026-10-11"
-  status: active
+  status: released
   entries:
   - type: fix
     description: register shutdown callback and unreference RefCounted loader on unregister
