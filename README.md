@@ -47,6 +47,9 @@ graph TD
   - **Video**: MP4, MKV, WebM, AVI, MOV, FLV, MPEG-TS, H.264, HEVC/H.265, VP9, AV1.
   - **Audio**: MP3, FLAC, OGG Vorbis, Opus, AAC, WAV, ALAC, WMA.
   - **Live Streams**: HLS (`.m3u8`), RTSP, RTMP, HTTP/HTTPS audio & video streams, internet radio.
+- **Hardware Video Acceleration & Two-Tier DSL**:
+  - Cross-platform GPU decoding via `Emerald::Core::HardwareAcceleration` (`D3D11VA`, `DXVA2`, `VAAPI`, `VDPAU`, `VideoToolbox`, `MediaCodec`, `NVDEC`, `Auto`, `None`) and `Emerald::Core::VideoDecoderConfig`.
+  - Ergonomic declarative configuration via `Emerald.media` / `Emerald.decoder_config` and `Emerald::DSL::MediaBuilder`.
 - **Double-Buffered Zero-Tear Rendering**: Decouples asynchronous LibVLC decoder threads from Godot's main graphics loop with mutex-guarded atomic surface swapping.
 - **Ready-to-Use Godot Nodes**:
   - `EmeraldVideoPlayer` (`Control`): Full-featured UI player for cutscenes, menus, and HUD media players.

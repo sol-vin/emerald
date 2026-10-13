@@ -9,6 +9,8 @@ module Emerald
         lib Kernel32
           fun SetDllDirectoryA(path_name : LibC::Char*) : LibC::Int
           fun SetEnvironmentVariableA(name : LibC::Char*, value : LibC::Char*) : LibC::Int
+          fun LoadLibraryA(lpLibFileName : LibC::Char*) : Void*
+          fun GetProcAddress(hModule : Void*, lpProcName : LibC::Char*) : Void*
         end
       {% end %}
 
@@ -33,6 +35,11 @@ module Emerald
           candidates << "/usr/lib/x86_64-linux-gnu/vlc"
           candidates << "/usr/local/lib/vlc"
         {% end %}
+
+        ["addons/emerald/bin", "bin"].each do |rel|
+          expanded = File.expand_path(rel)
+          candidates << expanded if File.directory?(expanded)
+        end
 
         candidates
       end
@@ -63,6 +70,11 @@ module Emerald
           return addon_plugins if File.directory?(addon_plugins)
         end
 
+        search_candidates.each do |dir|
+          sub = File.join(dir, "plugins")
+          return sub if File.directory?(sub)
+        end
+
         # Check relative to working directory
         ["addons/emerald/bin/plugins", "bin/plugins", "plugins"].each do |rel|
           expanded = File.expand_path(rel)
@@ -70,8 +82,6 @@ module Emerald
         end
 
         search_candidates.each do |dir|
-          sub = File.join(dir, "plugins")
-          return sub if File.directory?(sub)
           return dir if File.directory?(dir) && File.file?(File.join(dir, "libvlc.dll"))
         end
 
@@ -84,21 +94,39 @@ module Emerald
 
         if vlc_dir = find_vlc_directory
           {% if flag?(:windows) %}
+            win_vlc_dir = vlc_dir.gsub('/', '\\')
             # Register directory for Windows DLL dynamic loader
-            Kernel32.SetDllDirectoryA(vlc_dir)
+            Kernel32.SetDllDirectoryA(win_vlc_dir)
 
             # Ensure PATH has the directory so dependent DLLs (libvlccore.dll) resolve
             current_path = ENV["PATH"]? || ""
-            unless current_path.includes?(vlc_dir)
-              ENV["PATH"] = "#{vlc_dir};#{current_path}"
+            unless current_path.includes?(win_vlc_dir)
+              ENV["PATH"] = "#{win_vlc_dir};#{current_path}"
             end
           {% end %}
         end
 
         if plugins_dir = find_plugins_directory
-          ENV["VLC_PLUGIN_PATH"] ||= plugins_dir
           {% if flag?(:windows) %}
-            Kernel32.SetEnvironmentVariableA("VLC_PLUGIN_PATH", plugins_dir)
+            win_plugins_dir = (File.realpath(plugins_dir) rescue plugins_dir).gsub('/', '\\')
+            ENV["VLC_PLUGIN_PATH"] ||= win_plugins_dir
+            Kernel32.SetEnvironmentVariableA("VLC_PLUGIN_PATH", win_plugins_dir)
+            env_entry = "VLC_PLUGIN_PATH=#{win_plugins_dir}"
+            {% for dll in ["msvcrt.dll", "ucrtbase.dll"] %}
+              h_crt = Kernel32.LoadLibraryA({{dll}})
+              unless h_crt.null?
+                fn_putenv = Kernel32.GetProcAddress(h_crt, "_putenv")
+                unless fn_putenv.null?
+                  Proc(LibC::Char*, LibC::Int).new(fn_putenv, Pointer(Void).null).call(env_entry.to_unsafe)
+                end
+                fn_wputenv = Kernel32.GetProcAddress(h_crt, "_wputenv")
+                unless fn_wputenv.null?
+                  Proc(UInt16*, LibC::Int).new(fn_wputenv, Pointer(Void).null).call(env_entry.to_utf16.to_unsafe)
+                end
+              end
+            {% end %}
+          {% else %}
+            ENV["VLC_PLUGIN_PATH"] ||= plugins_dir
           {% end %}
         end
 

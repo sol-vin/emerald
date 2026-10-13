@@ -53,6 +53,10 @@ module Emerald
         # - `volume` (Int32): Audio volume from 0 to 100.
         # - `playback_rate` (Float64): Playback speed multiplier (0.25x to 4.0x).
         # - `aspect_mode` (String): Aspect ratio mode: "Fit", "Fill", "Stretch", or "Center".
+        # - `hardware_acceleration` (String): Hardware video acceleration backend: "Auto", "None", "D3D11VA", "DXVA2", "VAAPI", "VDPAU", "VideoToolbox", "MediaCodec", or "NVDEC".
+        # - `decoding_threads` (Int32): Number of decoder worker threads (0 for auto).
+        # - `low_latency` (Bool): Enables low-latency caching for minimal frame delay.
+        # - `drop_late_frames` (Bool): Drops frames that arrive after their presentation timestamp.
         #
         def self.topic_02_inspector_properties : Nil; end
 

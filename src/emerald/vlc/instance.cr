@@ -12,7 +12,8 @@ module Emerald
         "--no-snapshot-preview",
         "--quiet",
         "--network-caching=1000",
-        "--sub-source=marq"
+        "--sub-source=marq",
+        "--avcodec-hw=any"
       ]
 
       def initialize(args : Array(String) = DEFAULT_ARGS)
@@ -21,11 +22,27 @@ module Emerald
         c_args = args.map(&.to_unsafe)
         @handle = LibVLC.libvlc_new(c_args.size, c_args.to_unsafe)
 
+        if @handle.null? && args.any?(&.starts_with?("--avcodec-"))
+          fallback_args = args.reject(&.starts_with?("--avcodec-"))
+          c_fallback = fallback_args.map(&.to_unsafe)
+          @handle = LibVLC.libvlc_new(c_fallback.size, c_fallback.to_unsafe)
+        end
+
         if @handle.null?
           err = LibVLC.libvlc_errmsg
           err_str = err.null? ? "Unknown error" : String.new(err)
           raise "Failed to initialize LibVLC instance: #{err_str}"
         end
+      end
+
+      def self.with_config(config : Core::VideoDecoderConfig) : Instance
+        base_args = [
+          "--no-video-title-show",
+          "--no-snapshot-preview",
+          "--quiet",
+          "--sub-source=marq"
+        ]
+        new(base_args + config.to_instance_args)
       end
 
       # Shared process-wide singleton LibVLC instance

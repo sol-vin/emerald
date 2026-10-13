@@ -1,4 +1,6 @@
 require "./emerald/version"
+require "./emerald/core/hardware_acceleration"
+require "./emerald/core/decoder_config"
 require "./emerald/vlc/lib_vlc"
 require "./emerald/vlc/environment"
 require "./emerald/vlc/metadata"
@@ -9,6 +11,7 @@ require "./emerald/vlc/event_manager"
 require "./emerald/vlc/instance"
 require "./emerald/vlc/media"
 require "./emerald/vlc/media_player"
+require "./emerald/dsl/media_builder"
 require "./emerald/resources/media_resource"
 require "./emerald/resources/resource_format_loader"
 require "./emerald/nodes/video_player"
@@ -17,6 +20,9 @@ require "./emerald/nodes/video_player_3d"
 
 # Root namespace for the Emerald library
 module Emerald
+  alias HardwareAcceleration = Core::HardwareAcceleration
+  alias VideoDecoderConfig = Core::VideoDecoderConfig
+  alias MediaBuilder = DSL::MediaBuilder
   alias Instance = VLC::Instance
   alias MediaPlayer = VLC::MediaPlayer
   alias Media = VLC::Media

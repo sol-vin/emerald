@@ -1,4 +1,9 @@
 # CARBON CHANGELOG
+## [0.1.18] - 2026-10-13
+### ✨ Features & Improvements
+- ✦ **[HW-ACCEL]** implement hardware video acceleration (D3D11VA, DXVA2, VAAPI, VDPAU, VideoToolbox, MediaCodec, NVDEC) with Two-Tier Core/DSL architecture
+
+---
 ## [0.1.17] - 2026-10-11
 ### 🐛 Bug Fixes
 - ✓ register shutdown callback and unreference RefCounted loader on unregister

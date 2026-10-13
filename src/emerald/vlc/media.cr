@@ -5,9 +5,11 @@ module Emerald
       getter handle : LibVLC::Media
       getter instance : Instance
       getter mrl : String
+      getter options : Array(String)
 
-      def initialize(source : String, instance : Instance? = nil)
+      def initialize(source : String, instance : Instance? = nil, decoder_config : Core::VideoDecoderConfig? = nil)
         @instance = instance || Instance.default
+        @options = Array(String).new
 
         # Auto-detect if source is a network stream or local file
         if source =~ %r{^(http|https|rtsp|rtmp|mms|udp|tcp|ftp)://}i
@@ -28,6 +30,34 @@ module Emerald
         if @handle.null?
           raise "Failed to create LibVLC Media for: #{source}"
         end
+
+        if cfg = decoder_config
+          apply_decoder_config(cfg)
+        end
+      end
+
+      # Adds a LibVLC per-media option string (e.g. ":avcodec-hw=d3d11va")
+      def add_option(option : String) : self
+        @options << option
+        LibVLC.libvlc_media_add_option(@handle, option)
+        self
+      end
+
+      # Adds multiple LibVLC per-media option strings
+      def add_options(opts : Enumerable(String)) : self
+        opts.each { |opt| add_option(opt) }
+        self
+      end
+
+      # Applies a Core::VideoDecoderConfig to this media resource
+      def apply_decoder_config(config : Core::VideoDecoderConfig) : self
+        add_options(config.to_media_options)
+      end
+
+      # Sets the hardware video acceleration backend for this media resource
+      def hardware_acceleration=(backend : Core::HardwareAcceleration) : Core::HardwareAcceleration
+        add_option(backend.to_media_option)
+        backend
       end
 
       # Media duration in milliseconds (-1 if unknown or live stream)
