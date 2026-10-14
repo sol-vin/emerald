@@ -23,9 +23,13 @@ settings:
       title: "\U0001F6E0️ Chores & Tooling"
       bullet: •
 releases:
-- version: 0.1.18
+- version: 0.1.20
   date: "2026-10-13"
   status: active
+  entries: []
+- version: 0.1.18
+  date: "2026-10-13"
+  status: released
   entries:
   - type: feat
     description: implement hardware video acceleration (D3D11VA, DXVA2, VAAPI, VDPAU,
