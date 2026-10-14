@@ -1,4 +1,6 @@
 # CARBON CHANGELOG
+## [0.1.20] - 2026-10-13
+---
 ## [0.1.18] - 2026-10-13
 ### ✨ Features & Improvements
 - ✦ **[HW-ACCEL]** implement hardware video acceleration (D3D11VA, DXVA2, VAAPI, VDPAU, VideoToolbox, MediaCodec, NVDEC) with Two-Tier Core/DSL architecture

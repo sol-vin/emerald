@@ -1,0 +1,27 @@
+name: Addon CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+concurrency:
+  group: emerald-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-addon:
+    name: Emerald Addon CI
+    uses: sol-vin/lapis/.github/workflows/build-addon.yml@4.8-dev7
+    with:
+      addon-name: emerald
+      entry-point: src/main.cr
+      godot-version: 4.8-dev7
+      lapis-ref: 4.8-dev7
+      install-libvlc: "true"
+      os-matrix: '["ubuntu-latest", "windows-latest"]'
+      run-specs: true
+      run-headless: true
+      run-benchmarks: true
