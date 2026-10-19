@@ -23,9 +23,18 @@ settings:
       title: "\U0001F6E0️ Chores & Tooling"
       bullet: •
 releases:
-- version: 0.1.22
+- version: 0.1.23
   date: "2026-10-18"
   status: active
+  entries:
+  - type: ci
+    description: unify addon CI/Release with template-addon and target Lapis 4.8-beta1
+    bullet: •
+    hash: 41270ad
+    author: Ian Rash
+- version: 0.1.22
+  date: "2026-10-18"
+  status: released
   entries: []
 - version: 0.1.20
   date: "2026-10-13"
