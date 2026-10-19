@@ -23,9 +23,13 @@ settings:
       title: "\U0001F6E0️ Chores & Tooling"
       bullet: •
 releases:
+- version: 0.1.22
+  date: "2026-10-18"
+  status: active
+  entries: []
 - version: 0.1.20
   date: "2026-10-13"
-  status: active
+  status: released
   entries: []
 - version: 0.1.18
   date: "2026-10-13"
