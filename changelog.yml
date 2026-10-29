@@ -23,9 +23,24 @@ settings:
       title: "\U0001F6E0️ Chores & Tooling"
       bullet: •
 releases:
+- version: 0.1.24
+  date: "2026-10-28"
+  status: active
+  entries:
+  - type: ci
+    description: unify addon CI/Release with template-addon and target Lapis 4.8-beta1
+    bullet: •
+    hash: 41270ad
+    author: Ian Rash
+  - type: fix
+    description: update ci_workflow_spec and shard.override.yml staging
+    bullet: ✓
+    badge: '[CI]'
+    hash: 60f11b5
+    author: Ian Rash
 - version: 0.1.23
   date: "2026-10-18"
-  status: active
+  status: released
   entries:
   - type: ci
     description: unify addon CI/Release with template-addon and target Lapis 4.8-beta1
