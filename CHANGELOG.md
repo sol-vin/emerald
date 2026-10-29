@@ -1,4 +1,13 @@
 # CARBON CHANGELOG
+## [0.1.25] - 2026-10-28
+### 🐛 Bug Fixes
+- ✓ **[CI]** update ci_workflow_spec and shard.override.yml staging ([`60f11b5`](https://github.com/sol-vin/emerald/commit/60f11b5))
+
+### 🛠️ Chores & Tooling
+- • unify addon CI/Release with template-addon and target Lapis 4.8-beta1 ([`41270ad`](https://github.com/sol-vin/emerald/commit/41270ad))
+- • **[DEPS]** upgrade Lapis to v0.1.11 (4.8-beta1) ([`670498e`](https://github.com/sol-vin/emerald/commit/670498e))
+
+---
 ## [0.1.24] - 2026-10-28
 ### 🐛 Bug Fixes
 - ✓ **[CI]** update ci_workflow_spec and shard.override.yml staging ([`60f11b5`](https://github.com/sol-vin/emerald/commit/60f11b5))
