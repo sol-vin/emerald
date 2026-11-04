@@ -23,9 +23,58 @@ settings:
       title: "\U0001F6E0️ Chores & Tooling"
       bullet: •
 releases:
-- version: 0.1.29
+- version: 0.1.30
   date: "2026-11-04"
   status: active
+  entries:
+  - type: ci
+    description: unify addon CI/Release with template-addon and target Lapis 4.8-beta1
+    bullet: •
+    hash: 41270ad
+    author: Ian Rash
+  - type: fix
+    description: update ci_workflow_spec and shard.override.yml staging
+    bullet: ✓
+    badge: '[CI]'
+    hash: 60f11b5
+    author: Ian Rash
+  - type: chore
+    description: upgrade Lapis to v0.1.11 (4.8-beta1)
+    bullet: •
+    badge: '[DEPS]'
+    hash: 670498e
+    author: Ian Rash
+  - type: chore
+    description: lock Lapis v0.1.12 (4.8-beta1)
+    bullet: •
+    badge: '[DEPS]'
+    hash: 3f26f04
+    author: Ian Rash
+  - type: chore
+    description: upgrade Lapis to Godot 4.8-beta2
+    bullet: •
+    badge: '[DEPS]'
+    hash: b0e8845
+    author: Ian Rash
+  - type: ci
+    description: use GNU ld.bfd for Linux shared libraries and macOS arm64 Godot 4.8-beta2
+      fallback
+    bullet: •
+    hash: 4e53e1a
+    author: Ian Rash
+  - type: ci
+    description: include vlc-plugin-base for headless libvlc_new on Linux
+    bullet: •
+    hash: b0262c7
+    author: Ian Rash
+  - type: ci
+    description: preserve UTF-8 workflow encoding and install vlc-plugin-base
+    bullet: •
+    hash: e4cc2b1
+    author: Ian Rash
+- version: 0.1.29
+  date: "2026-11-04"
+  status: released
   entries:
   - type: ci
     description: unify addon CI/Release with template-addon and target Lapis 4.8-beta1
