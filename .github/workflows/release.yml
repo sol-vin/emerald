@@ -95,7 +95,7 @@ jobs:
         shell: bash
         run: |
           if [ -n "$GITHUB_STEP_SUMMARY" ]; then
-            echo "## 📋 Release Initialization Metadata" >> "$GITHUB_STEP_SUMMARY"
+            echo "## ðŸ“‹ Release Initialization Metadata" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "| Parameter | Value |" >> "$GITHUB_STEP_SUMMARY"
             echo "| :--- | :--- |" >> "$GITHUB_STEP_SUMMARY"
@@ -130,7 +130,7 @@ jobs:
           sudo apt-get update
           PKGS="libgc-dev"
           if [ -d "ext/libvlc" ] || grep -qiE "emerald|libvlc" shard.yml addons/*/*.gdextension 2>/dev/null; then
-            PKGS="$PKGS libvlc-dev"
+            PKGS="$PKGS libvlc-dev vlc-plugin-base"
           fi
           sudo apt-get install -y $PKGS
           GODOT_VER=$(sed -n 's/.*version:[[:space:]]*["'"'"']\?\([^"'"'"']\+\)["'"'"']\?.*/\1/p' godot-version.yml 2>/dev/null | tr -d '\r\n[:space:]')
@@ -296,12 +296,12 @@ jobs:
         shell: bash
         run: |
           mkdir -p bin/android
-          echo "## 📱 Android Multiplatform Verification" > bin/android/test_report.md
+          echo "## ðŸ“± Android Multiplatform Verification" > bin/android/test_report.md
           echo "" >> bin/android/test_report.md
           echo "| Check | Status | Details |" >> bin/android/test_report.md
           echo "| :--- | :---: | :--- |" >> bin/android/test_report.md
-          echo "| Architecture Support | ✅ | arm64-v8a ready |" >> bin/android/test_report.md
-          echo "| GDExtension Manifest | ✅ | Validated for mobile export |" >> bin/android/test_report.md
+          echo "| Architecture Support | âœ… | arm64-v8a ready |" >> bin/android/test_report.md
+          echo "| GDExtension Manifest | âœ… | Validated for mobile export |" >> bin/android/test_report.md
           echo "| Target Godot Engine | \`${{ needs.init-release.outputs.godot_version }}\` | Clean verification |" >> bin/android/test_report.md
 
       - name: Publish Android Step Summary
@@ -335,7 +335,7 @@ jobs:
           sudo apt-get update
           PKGS="libgc-dev g++ wget unzip curl"
           if [ -d "ext/libvlc" ] || grep -qiE "emerald|libvlc" shard.yml addons/*/*.gdextension 2>/dev/null; then
-            PKGS="$PKGS libvlc-dev"
+            PKGS="$PKGS libvlc-dev vlc-plugin-base"
           fi
           sudo apt-get install -y $PKGS
       - name: Setup Godot Engine
@@ -802,7 +802,7 @@ jobs:
         shell: bash
         run: |
           if [ -d "ext/libvlc" ] || grep -qiE "emerald|libvlc" shard.yml addons/*/*.gdextension 2>/dev/null; then
-            sudo apt-get update && sudo apt-get install -y libgc-dev libvlc-dev
+            sudo apt-get update && sudo apt-get install -y libgc-dev libvlc-dev vlc-plugin-base
           fi
           GODOT_VER=$(sed -n 's/.*version:[[:space:]]*["'"'"']\?\([^"'"'"']\+\)["'"'"']\?.*/\1/p' godot-version.yml 2>/dev/null | tr -d '\r\n[:space:]')
           if [ -z "$GODOT_VER" ]; then GODOT_VER="4.8-beta2"; fi
@@ -1101,20 +1101,20 @@ jobs:
           if [ -n "$GITHUB_STEP_SUMMARY" ]; then
             ADDON_NAME="${{ needs.init-release.outputs.addon_name }}"
             count=$(ls -1 bin/linux/*.zip 2>/dev/null | wc -l)
-            echo "## 🚀 Addon Release Build Status — Linux (x86_64)" >> "$GITHUB_STEP_SUMMARY"
+            echo "## ðŸš€ Addon Release Build Status â€” Linux (x86_64)" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "| Overall Status | Platform | Target Godot | Artifact Count |" >> "$GITHUB_STEP_SUMMARY"
             echo "| :---: | :---: | :---: | :---: |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| 🟢 **ALL PHASES PASSED** | **Linux (x86_64)** | \`${{ needs.init-release.outputs.godot_version }}\` | **$count** |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| ðŸŸ¢ **ALL PHASES PASSED** | **Linux (x86_64)** | \`${{ needs.init-release.outputs.godot_version }}\` | **$count** |" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo "### 📊 Release Build Phases Tracked" >> "$GITHUB_STEP_SUMMARY"
+            echo "### ðŸ“Š Release Build Phases Tracked" >> "$GITHUB_STEP_SUMMARY"
             echo "| Status | Phase Tag | Phase Name | Category |" >> "$GITHUB_STEP_SUMMARY"
             echo "| :---: | :--- | :--- | :--- |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| ✅ | \`[BUILD:CORE]\` | Core Addon Shared Object (.so) | Build |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| ✅ | \`[TEST:SPECS]\` | Specification Suite Verification | Test |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| ✅ | \`[PACKAGE:ADDON]\` | Distributable Addon Zip Archive | Package |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| âœ… | \`[BUILD:CORE]\` | Core Addon Shared Object (.so) | Build |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| âœ… | \`[TEST:SPECS]\` | Specification Suite Verification | Test |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| âœ… | \`[PACKAGE:ADDON]\` | Distributable Addon Zip Archive | Package |" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo "<details open><summary><b>📦 Built Linux Release Deliverables</b></summary>" >> "$GITHUB_STEP_SUMMARY"
+            echo "<details open><summary><b>ðŸ“¦ Built Linux Release Deliverables</b></summary>" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "| Artifact File | Size |" >> "$GITHUB_STEP_SUMMARY"
             echo "| :--- | :---: |" >> "$GITHUB_STEP_SUMMARY"
@@ -1148,20 +1148,20 @@ jobs:
         run: |
           if [ -n "$GITHUB_STEP_SUMMARY" ]; then
             count=$(ls -1 bin/macos/*.zip 2>/dev/null | wc -l)
-            echo "## 🚀 Addon Release Build Status — macOS" >> "$GITHUB_STEP_SUMMARY"
+            echo "## ðŸš€ Addon Release Build Status â€” macOS" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "| Overall Status | Platform | Target Godot | Artifact Count |" >> "$GITHUB_STEP_SUMMARY"
             echo "| :---: | :---: | :---: | :---: |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| 🟢 **ALL PHASES PASSED** | **macOS** | \`${{ needs.init-release.outputs.godot_version }}\` | **$count** |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| ðŸŸ¢ **ALL PHASES PASSED** | **macOS** | \`${{ needs.init-release.outputs.godot_version }}\` | **$count** |" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo "### 📊 Release Build Phases Tracked" >> "$GITHUB_STEP_SUMMARY"
+            echo "### ðŸ“Š Release Build Phases Tracked" >> "$GITHUB_STEP_SUMMARY"
             echo "| Status | Phase Tag | Phase Name | Category |" >> "$GITHUB_STEP_SUMMARY"
             echo "| :---: | :--- | :--- | :--- |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| ✅ | \`[BUILD:CORE]\` | Core Addon Dynamic Library (.dylib) | Build |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| ✅ | \`[TEST:SPECS]\` | Specification Suite Verification | Test |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| ✅ | \`[PACKAGE:ADDON]\` | Distributable Addon Zip Archive | Package |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| âœ… | \`[BUILD:CORE]\` | Core Addon Dynamic Library (.dylib) | Build |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| âœ… | \`[TEST:SPECS]\` | Specification Suite Verification | Test |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| âœ… | \`[PACKAGE:ADDON]\` | Distributable Addon Zip Archive | Package |" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
-            echo "<details open><summary><b>📦 Built macOS Release Deliverables</b></summary>" >> "$GITHUB_STEP_SUMMARY"
+            echo "<details open><summary><b>ðŸ“¦ Built macOS Release Deliverables</b></summary>" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "| Artifact File | Size |" >> "$GITHUB_STEP_SUMMARY"
             echo "| :--- | :---: |" >> "$GITHUB_STEP_SUMMARY"
@@ -1200,20 +1200,20 @@ jobs:
             }
             $artRows = ($artifacts | ForEach-Object { "| ``$($_.Name)`` | $([math]::Round($_.Length / 1MB, 2)) MB |" }) -join "`n"
             $summaryLines = @(
-              "## 🚀 Addon Release Build Status — Windows (x86_64)",
+              "## ðŸš€ Addon Release Build Status â€” Windows (x86_64)",
               "",
               "| Overall Status | Platform | Target Godot | Artifact Count |",
               "| :---: | :---: | :---: | :---: |",
-              "| 🟢 **ALL PHASES PASSED** | **Windows (x86_64)** | `$($env:GODOT_VERSION)` | **$($artifacts.Count)** |",
+              "| ðŸŸ¢ **ALL PHASES PASSED** | **Windows (x86_64)** | `$($env:GODOT_VERSION)` | **$($artifacts.Count)** |",
               "",
-              "### 📊 Release Build Phases Tracked",
+              "### ðŸ“Š Release Build Phases Tracked",
               "| Status | Phase Tag | Phase Name | Category |",
               "| :---: | :--- | :--- | :--- |",
-              "| ✅ | ``[BUILD:CORE]`` | Core Addon DLL (game.dll) | Build |",
-              "| ✅ | ``[TEST:SPECS]`` | Specification Suite Verification | Test |",
-              "| ✅ | ``[PACKAGE:ADDON]`` | Distributable Addon Zip Archive | Package |",
+              "| âœ… | ``[BUILD:CORE]`` | Core Addon DLL (game.dll) | Build |",
+              "| âœ… | ``[TEST:SPECS]`` | Specification Suite Verification | Test |",
+              "| âœ… | ``[PACKAGE:ADDON]`` | Distributable Addon Zip Archive | Package |",
               "",
-              "<details open><summary><b>📦 Built Windows Release Deliverables ($($artifacts.Count) files)</b></summary>",
+              "<details open><summary><b>ðŸ“¦ Built Windows Release Deliverables ($($artifacts.Count) files)</b></summary>",
               "",
               "| Artifact File | Size |",
               "| :--- | :---: |",
@@ -1314,17 +1314,17 @@ jobs:
           cat << 'EOF' > release_body.md
           ## ${{ needs.init-release.outputs.addon_name }} Addon Release Notes
 
-          ### 📦 Deliverables
+          ### ðŸ“¦ Deliverables
           - **`${ADDON_NAME}-universal.zip`**: Universal GDExtension package containing all available platform libraries.
           - **`${ADDON_NAME}-windows.zip`**: Optimized GDExtension bundle for **Windows (x86_64)**.
           - **`${ADDON_NAME}-linux.zip`**: Optimized GDExtension bundle for **Linux (x86_64)**.
           - **`${ADDON_NAME}-macos.zip`**: Optimized GDExtension bundle for **macOS**.
 
-          ### 🔧 Engine Compatibility
+          ### ðŸ”§ Engine Compatibility
           - **Target Godot Engine**: `${GODOT_VER}`
           - **Architecture**: 2-Way GDExtension & Native Crystal Addon
 
-          ### 🔒 Integrity Checksums
+          ### ðŸ”’ Integrity Checksums
           Refer to `checksums.txt` for SHA-256 validation of all distributed binaries.
           EOF
           sed -i "s/\${ADDON_NAME}/$ADDON_NAME/g" release_body.md
@@ -1419,7 +1419,7 @@ jobs:
         shell: bash
         run: |
           if [ -d "ext/libvlc" ] || grep -qiE "emerald|libvlc" shard.yml addons/*/*.gdextension 2>/dev/null; then
-            sudo apt-get update && sudo apt-get install -y libvlc-dev vlc || true
+            sudo apt-get update && sudo apt-get install -y libvlc-dev vlc-plugin-base vlc || true
           fi
           mkdir -p bin
           GODOT_VER="${{ needs.init-release.outputs.godot_version }}"
@@ -1521,10 +1521,10 @@ jobs:
         shell: bash
         run: |
           if [ -n "$GITHUB_STEP_SUMMARY" ]; then
-            echo "## 📚 Documentation & Benchmarks Deployed to GitHub Pages" >> "$GITHUB_STEP_SUMMARY"
+            echo "## ðŸ“š Documentation & Benchmarks Deployed to GitHub Pages" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "| Target | URL | Status |" >> "$GITHUB_STEP_SUMMARY"
             echo "| :--- | :--- | :---: |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| 📖 **API Documentation** | [${{ steps.deployment.outputs.page_url }}](${{ steps.deployment.outputs.page_url }}) | 🟢 Live |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| ⚡ **Benchmark Dashboard** | [${{ steps.deployment.outputs.page_url }}benchmarks.html](${{ steps.deployment.outputs.page_url }}benchmarks.html) | 🟢 Live |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| ðŸ“– **API Documentation** | [${{ steps.deployment.outputs.page_url }}](${{ steps.deployment.outputs.page_url }}) | ðŸŸ¢ Live |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| âš¡ **Benchmark Dashboard** | [${{ steps.deployment.outputs.page_url }}benchmarks.html](${{ steps.deployment.outputs.page_url }}benchmarks.html) | ðŸŸ¢ Live |" >> "$GITHUB_STEP_SUMMARY"
           fi
