@@ -62,7 +62,7 @@ jobs:
           fi
           if [ "${{ runner.os }}" = "Linux" ]; then
             sudo apt-get update
-            PKGS="make g++ libgc-dev wget unzip curl"
+            PKGS="make g++ libgc-dev libxml2-dev wget unzip curl"
             [ "$NEEDS_VLC" = "true" ] && PKGS="$PKGS libvlc-dev vlc-plugin-base"
             sudo apt-get install -y $PKGS
           elif [ "${{ runner.os }}" = "macOS" ] && [ "$NEEDS_VLC" = "true" ]; then
@@ -441,14 +441,14 @@ jobs:
         shell: bash
         run: |
           if [ -n "$GITHUB_STEP_SUMMARY" ]; then
-            echo "### ðŸ§ª Addon Verification Summary for ${{ runner.os }}" >> "$GITHUB_STEP_SUMMARY"
+            echo "### 🧪 Addon Verification Summary for ${{ runner.os }}" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "| Check | Status | Details |" >> "$GITHUB_STEP_SUMMARY"
             echo "| :--- | :---: | :--- |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| ðŸ’Ž Crystal Specs | ðŸŸ¢ Passed | Headless specifications validated |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| ðŸ¤– Godot Engine | ðŸŸ¢ ${{ steps.godot-meta.outputs.godot_version }} | Resolved dynamically from godot-version.yml |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| ðŸ—ï¸ Addon Build | ðŸŸ¢ Passed | Compiled via \`make all\` |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| ðŸš€ Headless Smoke Test | ðŸŸ¢ Passed | Engine loaded addon and cleanly exited |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| 💎 Crystal Specs | 🟢 Passed | Headless specifications validated |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| 🤖 Godot Engine | 🟢 ${{ steps.godot-meta.outputs.godot_version }} | Resolved dynamically from godot-version.yml |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| 🏗️ Addon Build | 🟢 Passed | Compiled via \`make all\` |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| 🚀 Headless Smoke Test | 🟢 Passed | Engine loaded addon and cleanly exited |" >> "$GITHUB_STEP_SUMMARY"
           fi
 
   android-verify:
@@ -491,11 +491,11 @@ jobs:
         shell: bash
         run: |
           if [ -n "$GITHUB_STEP_SUMMARY" ]; then
-            echo "### ðŸ“± Android Multiplatform CI Summary" >> "$GITHUB_STEP_SUMMARY"
+            echo "### 📱 Android Multiplatform CI Summary" >> "$GITHUB_STEP_SUMMARY"
             echo "" >> "$GITHUB_STEP_SUMMARY"
             echo "| Check | Status | Details |" >> "$GITHUB_STEP_SUMMARY"
             echo "| :--- | :---: | :--- |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| Architecture | ðŸŸ¢ arm64-v8a | Android ABI target verified |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| Target Engine | ðŸŸ¢ \`${{ steps.godot-meta.outputs.godot_version }}\` | Resolved from godot-version.yml |" >> "$GITHUB_STEP_SUMMARY"
-            echo "| Multiplatform Audit | ðŸŸ¢ Passed | Addon structure validated for Android mobile |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| Architecture | 🟢 arm64-v8a | Android ABI target verified |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| Target Engine | 🟢 \`${{ steps.godot-meta.outputs.godot_version }}\` | Resolved from godot-version.yml |" >> "$GITHUB_STEP_SUMMARY"
+            echo "| Multiplatform Audit | 🟢 Passed | Addon structure validated for Android mobile |" >> "$GITHUB_STEP_SUMMARY"
           fi
