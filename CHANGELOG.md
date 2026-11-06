@@ -1,4 +1,19 @@
 # CARBON CHANGELOG
+## [0.1.31] - 2026-11-06
+### 🐛 Bug Fixes
+- ✓ **[CI]** update ci_workflow_spec and shard.override.yml staging ([`60f11b5`](https://github.com/sol-vin/emerald/commit/60f11b5))
+
+### 🛠️ Chores & Tooling
+- • unify addon CI/Release with template-addon and target Lapis 4.8-beta1 ([`41270ad`](https://github.com/sol-vin/emerald/commit/41270ad))
+- • **[DEPS]** upgrade Lapis to v0.1.11 (4.8-beta1) ([`670498e`](https://github.com/sol-vin/emerald/commit/670498e))
+- • **[DEPS]** lock Lapis v0.1.12 (4.8-beta1) ([`3f26f04`](https://github.com/sol-vin/emerald/commit/3f26f04))
+- • **[DEPS]** upgrade Lapis to Godot 4.8-beta2 ([`b0e8845`](https://github.com/sol-vin/emerald/commit/b0e8845))
+- • use GNU ld.bfd for Linux shared libraries and macOS arm64 Godot 4.8-beta2 fallback ([`4e53e1a`](https://github.com/sol-vin/emerald/commit/4e53e1a))
+- • include vlc-plugin-base for headless libvlc_new on Linux ([`b0262c7`](https://github.com/sol-vin/emerald/commit/b0262c7))
+- • preserve UTF-8 workflow encoding and install vlc-plugin-base ([`e4cc2b1`](https://github.com/sol-vin/emerald/commit/e4cc2b1))
+- • **[DEPS]** update lapis shard.lock to finalized 4.8-beta2 (56c198f) ([`22862d7`](https://github.com/sol-vin/emerald/commit/22862d7))
+
+---
 ## [0.1.30] - 2026-11-04
 ### 🐛 Bug Fixes
 - ✓ **[CI]** update ci_workflow_spec and shard.override.yml staging ([`60f11b5`](https://github.com/sol-vin/emerald/commit/60f11b5))
