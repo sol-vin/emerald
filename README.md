@@ -79,7 +79,7 @@ Add `emerald` to your game's `shard.yml`:
 dependencies:
   lapis:
     github: sol-vin/lapis
-    branch: 4.8-beta2
+    branch: 4.8-beta3
   emerald:
     github: sol-vin/emerald
     branch: main
