@@ -142,6 +142,7 @@ node ResourceFormatLoaderEmerald < ResourceFormatLoader do
           res.file_path = target_path
           res.populate_metadata!
           Bridge.ret_variant_object(ret, res.pointer)
+          res.destroy rescue nil
         else
           Bridge.ret_variant_nil(ret)
         end

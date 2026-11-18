@@ -27,6 +27,7 @@ module Emerald
       @count : Int32 = 0
       @mutex : ::Thread::Mutex
       @c_callback : LibVLC::EventCallback
+      @self_box : Void* = Pointer(Void).null
 
       # Main-thread Crystal callbacks registered by player or node
       property on_playing : (-> Nil)?
@@ -117,38 +118,50 @@ module Emerald
 
       private def attach_all : Nil
         boxed = Box.box(self)
-        events = [
+        @self_box = boxed
+        {
           LibVLC::EventType::MediaPlayerPlaying,
           LibVLC::EventType::MediaPlayerPaused,
           LibVLC::EventType::MediaPlayerStopped,
           LibVLC::EventType::MediaPlayerEndReached,
           LibVLC::EventType::MediaPlayerTimeChanged,
           LibVLC::EventType::MediaPlayerPositionChanged,
-          LibVLC::EventType::MediaPlayerEncounteredError
-        ]
-
-        events.each do |ev|
+          LibVLC::EventType::MediaPlayerEncounteredError,
+        }.each do |ev|
           LibVLC.libvlc_event_attach(@handle, ev, @c_callback, boxed)
         end
       end
 
-      def finalize
-        unless @handle.null?
-          events = [
-            LibVLC::EventType::MediaPlayerPlaying,
-            LibVLC::EventType::MediaPlayerPaused,
-            LibVLC::EventType::MediaPlayerStopped,
-            LibVLC::EventType::MediaPlayerEndReached,
-            LibVLC::EventType::MediaPlayerTimeChanged,
-            LibVLC::EventType::MediaPlayerPositionChanged,
-            LibVLC::EventType::MediaPlayerEncounteredError
-          ]
+      def detach_all! : Nil
+        h = @handle
+        boxed = @self_box
+        @handle = Pointer(Void).null.as(LibVLC::EventManager)
+        @self_box = Pointer(Void).null
+        @on_playing = nil
+        @on_paused = nil
+        @on_stopped = nil
+        @on_ended = nil
+        @on_time_changed = nil
+        @on_position_changed = nil
+        @on_length_changed = nil
+        @on_error = nil
+        return if h.null? || boxed.null?
 
-          boxed = Box.box(self)
-          events.each do |ev|
-            LibVLC.libvlc_event_detach(@handle, ev, @c_callback, boxed)
-          end
+        {
+          LibVLC::EventType::MediaPlayerPlaying,
+          LibVLC::EventType::MediaPlayerPaused,
+          LibVLC::EventType::MediaPlayerStopped,
+          LibVLC::EventType::MediaPlayerEndReached,
+          LibVLC::EventType::MediaPlayerTimeChanged,
+          LibVLC::EventType::MediaPlayerPositionChanged,
+          LibVLC::EventType::MediaPlayerEncounteredError,
+        }.each do |ev|
+          LibVLC.libvlc_event_detach(h, ev, @c_callback, boxed)
         end
+      end
+
+      def finalize
+        detach_all!
       end
     end
   end

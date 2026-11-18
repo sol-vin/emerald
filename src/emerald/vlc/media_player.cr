@@ -362,12 +362,21 @@ module Emerald
         result
       end
 
-      def finalize
+      def release! : Nil
+        @event_manager.detach_all!
         unless @handle.null?
           LibVLC.libvlc_media_player_stop(@handle)
           LibVLC.libvlc_media_player_release(@handle)
           @handle = Pointer(Void).null.as(LibVLC::MediaPlayer)
         end
+        @render_context = nil
+        @render_context_box = Pointer(Void).null
+        @media = nil
+        @frame_buffer = nil
+      end
+
+      def finalize
+        release!
       end
     end
   end

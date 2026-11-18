@@ -108,8 +108,10 @@ node EmeraldVideoPlayer3D < Node3D do
   end
 
   def _exit_tree : Void
-    stop
-    @player = nil
+    if p = @player
+      p.release!
+      @player = nil
+    end
     @media = nil
     @frame_buffer = nil
   end

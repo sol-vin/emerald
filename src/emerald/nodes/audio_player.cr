@@ -76,8 +76,10 @@ node EmeraldAudioPlayer < Node do
   end
 
   def _exit_tree : Void
-    stop
-    @player = nil
+    if p = @player
+      p.release!
+      @player = nil
+    end
     @media = nil
   end
 
