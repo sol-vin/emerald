@@ -18,7 +18,7 @@ shards:
 
   lapis:
     git: https://github.com/sol-vin/lapis.git
-    version: 0.3.4+git.commit.b80aaf61270ecd33a8265e060b7f28b15e5f1b02
+    version: 0.3.6+git.commit.4340fc6a3beba41ff9cf1eea6704ea942062a7e2
 
   opal:
     git: https://github.com/sol-vin/opal.git
