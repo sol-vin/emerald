@@ -39,9 +39,9 @@ node ResourceFormatLoaderEmerald < ResourceFormatLoader do
         @@instance = loader
         @@created_by_us = true
         begin
-          r_loader.add_resource_format_loader(loader, true)
+          r_loader.add_resource_format_loader(loader, false)
         rescue
-          r_loader.call("add_resource_format_loader", loader, true) rescue nil
+          r_loader.call("add_resource_format_loader", loader, false) rescue nil
         end
         @@registered = true
         Bridge.register_shutdown_callback do
@@ -112,9 +112,13 @@ node ResourceFormatLoaderEmerald < ResourceFormatLoader do
           tname = Bridge.arg_to_string_name(args[1]) rescue ""
           tname = Bridge.arg_to_string(args[1]) rescue "" if tname.empty?
         end
-        type_ok = tname.empty? || tname == "Resource" || tname == "EmeraldMediaResource" || tname == "VideoStream"
-        ext = path.downcase.split('.').last? || ""
-        ret.as(UInt8*).value = (type_ok && EXTENSIONS.includes?(ext)) ? 1_u8 : 0_u8
+        if (tname.empty? || tname == "Resource") && path.starts_with?("res://") && (Godot::FileAccess.file_exists("#{path}.import") rescue false)
+          ret.as(UInt8*).value = 0_u8
+        else
+          type_ok = tname.empty? || tname == "Resource" || tname == "EmeraldMediaResource" || tname == "VideoStream"
+          ext = path.downcase.split('.').last? || ""
+          ret.as(UInt8*).value = (type_ok && EXTENSIONS.includes?(ext)) ? 1_u8 : 0_u8
+        end
       when "_handles_type"
         typename = (args && args[0]) ? (Bridge.arg_to_string_name(args[0]) rescue "") : ""
         typename = Bridge.arg_to_string(args[0]) rescue "" if typename.empty? && args && args[0]
@@ -122,16 +126,24 @@ node ResourceFormatLoaderEmerald < ResourceFormatLoader do
         ret.as(UInt8*).value = handles ? 1_u8 : 0_u8
       when "_get_resource_type"
         path = (args && args[0]) ? Bridge.arg_to_string(args[0]) : ""
-        ext = path.downcase.split('.').last? || ""
-        Bridge.ret_string(ret, EXTENSIONS.includes?(ext) ? "EmeraldMediaResource" : "")
+        if path.starts_with?("res://") && (Godot::FileAccess.file_exists("#{path}.import") rescue false)
+          Bridge.ret_string(ret, "")
+        else
+          ext = path.downcase.split('.').last? || ""
+          Bridge.ret_string(ret, EXTENSIONS.includes?(ext) ? "EmeraldMediaResource" : "")
+        end
       when "_get_resource_script_class"
         Bridge.ret_string(ret, "")
       when "_get_resource_uid"
         ret.as(Int64*).value = -1_i64
       when "_exists"
         path = (args && args[0]) ? Bridge.arg_to_string(args[0]) : ""
-        resolved = Emerald.resolve_source_path(path)
-        ret.as(UInt8*).value = File.file?(resolved) ? 1_u8 : 0_u8
+        if path.starts_with?("res://") && (Godot::FileAccess.file_exists("#{path}.import") rescue false)
+          ret.as(UInt8*).value = 0_u8
+        else
+          resolved = Emerald.resolve_source_path(path)
+          ret.as(UInt8*).value = File.file?(resolved) ? 1_u8 : 0_u8
+        end
       when "_load"
         path = (args && args[0]) ? Bridge.arg_to_string(args[0]) : ""
         orig_path = (args && args[1]) ? Bridge.arg_to_string(args[1]) : ""
