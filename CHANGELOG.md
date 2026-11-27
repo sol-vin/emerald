@@ -1,4 +1,6 @@
 # CARBON CHANGELOG
+## [0.1.41] - 2026-11-27
+---
 ## [0.1.40] - 2026-11-21
 ### 🐛 Bug Fixes
 - ✓ **[CI]** update ci_workflow_spec and shard.override.yml staging ([`60f11b5`](https://github.com/sol-vin/emerald/commit/60f11b5))
