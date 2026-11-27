@@ -23,9 +23,19 @@ settings:
       title: "\U0001F6E0️ Chores & Tooling"
       bullet: •
 releases:
-- version: 0.1.41
+- version: 0.1.42
   date: "2026-11-27"
   status: active
+  entries:
+  - type: chore
+    description: lock lapis v0.5.1 on 4.8-beta5
+    bullet: •
+    badge: '[DEPS]'
+    hash: e85270f
+    author: Ian Rash
+- version: 0.1.41
+  date: "2026-11-27"
+  status: released
   entries: []
 - version: 0.1.40
   date: "2026-11-21"

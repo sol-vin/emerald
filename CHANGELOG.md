@@ -1,4 +1,9 @@
 # CARBON CHANGELOG
+## [0.1.42] - 2026-11-27
+### 🛠️ Chores & Tooling
+- • **[DEPS]** lock lapis v0.5.1 on 4.8-beta5 ([`e85270f`](https://github.com/sol-vin/emerald/commit/e85270f))
+
+---
 ## [0.1.41] - 2026-11-27
 ---
 ## [0.1.40] - 2026-11-21

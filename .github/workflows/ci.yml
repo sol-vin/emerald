@@ -304,9 +304,6 @@ jobs:
           } elseif (Test-Path "../bin/lapis.exe") {
             Write-Host "Lapis found in parent directory"
             Copy-Item "../bin/lapis.exe" "bin/" -Force
-          } elseif (Test-Path "lib/lapis/tools/lapis/src/lapis.cr") {
-            Write-Host "Compiling Lapis CLI from shard lib/lapis..."
-            crystal build lib/lapis/tools/lapis/src/lapis.cr -o bin/lapis.exe --no-debug
           } else {
             Write-Host "Downloading pre-compiled Lapis CLI for Windows (target $godotVer)..."
             try {
@@ -321,6 +318,10 @@ jobs:
               } catch {
                 Write-Host "Download skipped or failed: $_"
               }
+            }
+            if (-not (Test-Path "bin/lapis.exe") -and (Test-Path "lib/lapis/tools/lapis/src/lapis.cr")) {
+              Write-Host "Compiling Lapis CLI from shard lib/lapis..."
+              crystal build lib/lapis/tools/lapis/src/lapis.cr -o bin/lapis.exe --no-debug
             }
           }
           if (Test-Path "bin/lapis.exe") {
